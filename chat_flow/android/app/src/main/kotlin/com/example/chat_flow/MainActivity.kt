@@ -1,4 +1,4 @@
-package com.example.chat_flow
+package com.ayttechnologies.chatflow
 
 import io.flutter.embedding.android.FlutterActivity
 
