@@ -1,0 +1,65 @@
+name: chat_flow
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  #State Management
+  flutter_bloc: ^8.1.6
+  bloc: ^8.1.4
+
+  #Json
+  json_serializable: ^6.8.0
+  json_annotation: ^4.9.0
+  equatable: ^2.0.5
+
+  #Network
+  dio: ^5.7.0
+
+  #Image
+  image: ^4.3.0
+  image_picker: ^1.1.2
+  flutter_svg: ^2.0.10+1
+  camera: ^0.10.5+9
+  cached_network_image: ^3.4.1
+
+  #Splash
+  flutter_native_splash: ^2.3.10
+
+  #UI
+  kartal: ^4.1.0
+  shimmer: ^3.0.0
+  lottie: ^3.2.0
+  flutter_screenutil: ^5.9.3
+
+  #Text
+  google_fonts: ^6.2.1
+  auto_size_text: ^3.0.0
+
+  #Locale Database
+  flutter_secure_storage: ^9.0.0
+
+dev_dependencies:
+  build_runner: ^2.4.13
+  flutter_test:
+    sdk: flutter
+
+  very_good_analysis: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
