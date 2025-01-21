@@ -1,11 +1,10 @@
 import 'package:chat_flow/utils/extension/string_extension.dart';
 
 enum LottieEnums {
-  login('login');
+  login('assets/lottie/lottie_login.json');
 
-  const LottieEnums(this.value);
+  final String path;
+  const LottieEnums(this.path);
 
-  final String value;
-
-  String get lottiePath => value.toLottieJson;
+  String get lottiePath => path.toLottieJson;
 }

@@ -22,6 +22,8 @@ class _RegisterViewStrings {
   static const String title = 'Kayıt Ol';
 
   // Form
+  static const String nameLabel = 'Ad Soyad';
+  static const String nameHint = 'John Doe';
   static const String emailLabel = 'E-posta';
   static const String emailHint = 'ornek@email.com';
   static const String passwordLabel = 'Şifre';
