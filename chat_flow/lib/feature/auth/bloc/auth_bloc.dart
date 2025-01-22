@@ -1,8 +1,9 @@
+import 'package:chat_flow/utils/tools/auth_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:chat_flow/feature/auth/model/user_model.dart';
+import 'package:chat_flow/core/models/user_model.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -34,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       emit(const AuthSuccess());
     } on FirebaseAuthException catch (e) {
-      emit(AuthFailure(e.message ?? 'Bir hata oluştu'));
+      emit(AuthFailure(AuthExceptionHandler.findExceptionType(e)));
     }
   }
 

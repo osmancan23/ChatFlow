@@ -4,9 +4,12 @@ mixin _ChatViewMixin on State<ChatView> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   bool _isTyping = false;
+  late IChatService _chatService;
+
 
   @override
   void initState() {
+    _chatService = ChatService();
     super.initState();
     _messageController.addListener(_onTextChanged);
   }

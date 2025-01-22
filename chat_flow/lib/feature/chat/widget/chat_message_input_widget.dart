@@ -1,56 +1,72 @@
-part of "../view/chat_view.dart";
+part of '../view/chat_view.dart';
 
-class _ChatMessageInputWidget extends StatelessWidget {
+class _ChatMessageInputWidget extends StatefulWidget {
   const _ChatMessageInputWidget({
     required TextEditingController messageController,
-    super.key,
+    required this.chatId,
   }) : _messageController = messageController;
 
   final TextEditingController _messageController;
+  final String chatId;
+
+  @override
+  State<_ChatMessageInputWidget> createState() => _ChatMessageInputWidgetState();
+}
+
+class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
+  late IChatService _chatService;
+
+  @override
+  void initState() {
+    _chatService = ChatService();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () {
-              // TODO: Implement attachment
-            },
-            icon: const Icon(Icons.attach_file),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: const InputDecoration(
-                hintText: 'Mesaj yazın...',
-                border: InputBorder.none,
-              ),
-              maxLines: null,
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(-1, -1),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              if (_messageController.text.isNotEmpty) {
-                // TODO: Send message
-                _messageController.clear();
-              }
-            },
-            icon: const Icon(Icons.send),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: widget._messageController,
+                decoration: const InputDecoration(
+                  hintText: 'Mesaj yazın...',
+                  border: InputBorder.none,
+                ),
+                maxLines: null,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                if (widget._messageController.text.isNotEmpty) {
+                  try {
+                    _chatService.sendMessage(widget.chatId, widget._messageController.text);
+                  } catch (e) {
+                    print(e);
+                  }
+                  widget._messageController.clear();
+                }
+              },
+              icon: const Icon(Icons.send),
+            ),
+          ],
+        ),
       ),
     );
   }

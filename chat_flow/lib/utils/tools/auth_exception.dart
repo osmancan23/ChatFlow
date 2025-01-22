@@ -24,7 +24,7 @@ class AuthExceptionHandler {
   static String findExceptionType(e) =>
       AuthExceptionHandler.generateExceptionMessage(AuthExceptionHandler.handleException(e));
 
-  static dynamic handleException(e) {
+  static AuthResultStatus handleException(e) {
     debugPrint('AuthExceptionHandleError: $e');
     AuthResultStatus status;
 

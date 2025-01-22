@@ -1,5 +1,8 @@
-import 'package:chat_flow/core/init/navigation/navigation_service.dart';
-import 'package:chat_flow/feature/chat/view/chat_view.dart';
+import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
+
+import 'package:chat_flow/core/models/user_model.dart';
+import 'package:chat_flow/core/service/chat_repository_impl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 part '../mixin/users_view_mixin.dart';
 part '../widget/user_tile_widget.dart';
@@ -20,11 +23,19 @@ class _UsersViewState extends State<UsersView> with _UsersViewMixin {
         _searchController,
         toggleSearch,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: 15,
-        itemBuilder: (context, index) {
-          return _UserTileWidget(index: index);
+      body: StreamBuilderWidget(
+        stream: _chatService.getAvailableUsers(),
+        builder: (context, List<UserModel>? users) {
+          return ListView.builder(
+            itemCount: users?.length ?? 0,
+            itemBuilder: (context, index) {
+              final user = users![index];
+              return _UserTileWidget(
+                user: user,
+                index: index,
+              );
+            },
+          );
         },
       ),
     );

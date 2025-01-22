@@ -1,11 +1,29 @@
+import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
+import 'package:chat_flow/core/models/chat_model.dart';
+import 'package:chat_flow/core/service/chat_repository_impl.dart';
 import 'package:chat_flow/feature/chat/view/chat_view.dart';
 import 'package:chat_flow/feature/users/view/users_view.dart';
+import 'package:chat_flow/utils/extension/string_extension.dart';
 import 'package:flutter/material.dart';
 part '../widget/chat_list_tile_widget.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late IChatService _chatService;
+
+  @override
+  void initState() {
+    _chatService = ChatService();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +31,19 @@ class HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sohbetler'),
       ),
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return _ChatListTileWidget(index: index);
+      body: StreamBuilderWidget(
+        stream: _chatService.getUserChats(),
+        builder: (context, List<ChatModel>? chats) {
+          return ListView.builder(
+            itemCount: chats?.length ?? 0,
+            itemBuilder: (context, index) {
+              final chat = chats![index];
+              return _ChatListTileWidget(
+                index: index,
+                chat: chat,
+              );
+            },
+          );
         },
       ),
       floatingActionButton: const _FloatingButtonWidget(),

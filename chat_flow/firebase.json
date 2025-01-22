@@ -1,1 +1,33 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"chatflow-f9c70","appId":"1:178904908092:android:30c0499deb55186a785e39","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"chatflow-f9c70","appId":"1:178904908092:ios:417914157d73fc12785e39","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"chatflow-f9c70","configurations":{"android":"1:178904908092:android:30c0499deb55186a785e39","ios":"1:178904908092:ios:417914157d73fc12785e39"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "chatflow-f9c70",
+          "appId": "1:178904908092:android:30c0499deb55186a785e39",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "chatflow-f9c70",
+          "appId": "1:178904908092:ios:417914157d73fc12785e39",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "chatflow-f9c70",
+          "configurations": {
+            "android": "1:178904908092:android:30c0499deb55186a785e39",
+            "ios": "1:178904908092:ios:417914157d73fc12785e39"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "singleProjectMode": true
+  }
+}

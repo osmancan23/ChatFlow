@@ -3,7 +3,9 @@ part of '../view/home_view.dart';
 class _ChatListTileWidget extends StatelessWidget {
   const _ChatListTileWidget({
     required this.index,
+    required this.chat,
   });
+  final ChatModel chat;
   final int index;
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class _ChatListTileWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '12:30', // TODO: Replace with actual time
+                  chat.updatedAt.toIso8601String().formatDateDifference,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 4),
@@ -72,7 +74,7 @@ class _ChatListTileWidget extends StatelessWidget {
             onTap: () {
               NavigationService.instance.navigateToPage(
                 context: context,
-                page: ChatView(chatId: index),
+                page: ChatView(chatId: chat.id),
               );
             },
           ),

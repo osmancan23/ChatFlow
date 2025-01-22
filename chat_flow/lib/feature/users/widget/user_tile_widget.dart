@@ -3,9 +3,11 @@ part of '../view/users_view.dart';
 class _UserTileWidget extends StatelessWidget {
   const _UserTileWidget({
     required this.index,
+    required this.user,
   });
 
   final int index;
+  final UserModel user;
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
@@ -60,7 +62,7 @@ class _UserTileWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Kullanıcı ${index + 1}',
+                user.fullName,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -68,7 +70,7 @@ class _UserTileWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '@kullanici${index + 1}',
+                user.email,
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
@@ -84,11 +86,16 @@ class _UserTileWidget extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () {
-                NavigationService.instance.navigateToPage(
-                  context: context,
-                  page: ChatView(chatId: index),
-                );
+              onPressed: () async {
+                try {
+                  final IChatService chatService = ChatService();
+                  await chatService.createChat([
+                    FirebaseAuth.instance.currentUser!.uid,
+                    user.id,
+                  ]);
+                } catch (e) {
+                  print(e);
+                }
               },
               icon: const Icon(
                 Icons.chat_bubble_outline,
@@ -98,10 +105,10 @@ class _UserTileWidget extends StatelessWidget {
             ),
           ),
           onTap: () {
-            NavigationService.instance.navigateToPage(
+            /*NavigationService.instance.navigateToPage(
               context: context,
               page: ChatView(chatId: index),
-            );
+            );*/
           },
         ),
       ),

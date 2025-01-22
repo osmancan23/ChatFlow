@@ -1,4 +1,8 @@
 import 'package:chat_flow/core/components/indicator/typing_indicator.dart';
+import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
+import 'package:chat_flow/core/models/message_model.dart';
+import 'package:chat_flow/core/service/chat_repository_impl.dart';
+import 'package:chat_flow/utils/extension/string_extension.dart';
 import 'package:flutter/material.dart';
 part '../mixin/chat_view_mixin.dart';
 part '../widget/chat_appbar_widget.dart';
@@ -7,7 +11,7 @@ part '../widget/chat_message_input_widget.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({required this.chatId, super.key});
-  final int chatId;
+  final String chatId;
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -23,15 +27,17 @@ class _ChatViewState extends State<ChatView> with _ChatViewMixin {
           Expanded(
             child: Stack(
               children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    final isMe = index.isEven;
-                    return _ChatMessageBox(
-                      isMe: isMe,
-                      index: index,
+                StreamBuilderWidget(
+                  stream: _chatService.getChatMessages(widget.chatId),
+                  builder: (context, List<MessageModel>? messages) {
+                    return ListView.builder(
+                      reverse: true,
+                      controller: _scrollController,
+                      itemCount: messages?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final message = messages![index];
+                        return _ChatMessageBox(message: message, index: index);
+                      },
                     );
                   },
                 ),
@@ -39,7 +45,10 @@ class _ChatViewState extends State<ChatView> with _ChatViewMixin {
               ],
             ),
           ),
-          _ChatMessageInputWidget(messageController: _messageController),
+          _ChatMessageInputWidget(
+            messageController: _messageController,
+            chatId: widget.chatId,
+          ),
         ],
       ),
     );

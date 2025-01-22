@@ -1,7 +1,9 @@
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
+import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 part '../mixin/provile_view_mixin.dart';
 part '../widget/profile_avatar_widget.dart';
 part '../widget/notification_switch_widget.dart';
@@ -21,8 +23,10 @@ class _ProfileViewState extends State<ProfileView> with _ProfileViewMixin {
         title: const Text(_ProfileViewStrings.title),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
+            onPressed: () {
+              context.read<AuthBloc>().add(const AuthLogoutRequested());
+            },
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),

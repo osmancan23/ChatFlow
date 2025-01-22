@@ -1,11 +1,12 @@
-part of "../view/chat_view.dart";
+part of '../view/chat_view.dart';
+
 class _ChatMessageBox extends StatelessWidget {
   const _ChatMessageBox({
-    required this.isMe,
-    super.key, required this.index,
+    required this.index,
+    required this.message,
   });
 
-  final bool isMe;
+  final MessageModel message;
   final int index;
   @override
   Widget build(BuildContext context) {
@@ -15,33 +16,33 @@ class _ChatMessageBox extends StatelessWidget {
       curve: Curves.easeOutQuad,
       builder: (context, value, child) {
         return Transform.translate(
-          offset: Offset(isMe ? (1 - value) * 100 : (value - 1) * 100, 0),
+          offset: Offset(message.isMe ? (1 - value) * 100 : (value - 1) * 100, 0),
           child: Opacity(
             opacity: value,
             child: Align(
-              alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
               child: Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
+                  color: message.isMe ? Theme.of(context).primaryColor : Colors.grey[300],
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Bu bir örnek mesajdır $index',
+                      message.content,
                       style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
+                        color: message.isMe ? Colors.white : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '12:30',
+                      message.timestamp.toIso8601String().formatDateDifference,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isMe ? Colors.white70 : Colors.black54,
+                        color: message.isMe ? Colors.white70 : Colors.black54,
                       ),
                     ),
                   ],

@@ -46,6 +46,55 @@ extension StringToDateTime on String {
 
   ///MARK: 2021-10-10T10:00:00.000Z -> 10.10.2021 Convert
   String get toDayMonthYear => split('T').first.split('-').reversed.join('.');
+
+  String get formatDateDifference {
+    // Verilen tarihi DateTime nesnesine dönüştürme
+    final givenDate = DateTime.parse(this);
+
+    // Şu anki zamanı al
+    final now = DateTime.now();
+
+    // Farkı hesapla
+    final difference = now.difference(givenDate);
+
+    // Farkı saniye cinsine çevir
+    final differenceInSeconds = difference.inSeconds;
+
+    // Saniye cinsinden 60 saniyeden az ise
+    if (differenceInSeconds < 60) {
+      return 'Şimdi';
+    }
+
+    // Dakika cinsinden 60 dakikadan az ise
+    else if (differenceInSeconds < 60 * 60) {
+      final minutesDifference = difference.inMinutes;
+      return '$minutesDifference dakika önce';
+    }
+
+    // Saat cinsinden 24 saatten az ise
+    else if (differenceInSeconds < 24 * 60 * 60) {
+      final hoursDifference = difference.inHours;
+      return '$hoursDifference saat önce';
+    }
+
+    // Gün cinsinden 30 günden az ise
+    else if (difference.inDays < 30) {
+      final daysDifference = difference.inDays;
+      return '$daysDifference gün önce';
+    }
+
+    // Ay cinsinden 12 aydan az ise
+    else if (difference.inDays < 365) {
+      final monthsDifference = (difference.inDays / 30).floor();
+      return '$monthsDifference ay önce';
+    }
+
+    // Yıl cinsinden
+    else {
+      final yearsDifference = (difference.inDays / 365).floor();
+      return '$yearsDifference yıl önce';
+    }
+  }
 }
 
 extension StringToDouble on String {
