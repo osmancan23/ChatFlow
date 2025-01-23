@@ -44,7 +44,7 @@ class _ChatListTileWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CustomText(
-                  chat.updatedAt.toIso8601String().formatDateDifference,
+                  chat.updatedAt?.toIso8601String().formatDateDifference,
                   textStyle: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 4),

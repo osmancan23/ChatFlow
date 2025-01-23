@@ -20,9 +20,14 @@ mixin _ChatViewMixin on State<ChatView> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _chatService.updateChatTypingStatus(chatId: widget.chatId, isTyping: false);
+    });
+
     _messageController.removeListener(_onTextChanged);
 
     _scrollController.dispose();
+
     super.dispose();
   }
 

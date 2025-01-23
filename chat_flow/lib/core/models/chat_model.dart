@@ -29,13 +29,13 @@ class ChatModel {
       id: doc.id,
       participants: participants,
       lastMessage: lastMessage,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
       typing: Map<String, bool>.from(data['typing'] as Map? ?? {}),
       lastSeen: (data['lastSeen'] as Map?)?.map(
             (key, value) => MapEntry(
               key as String,
-              (value as Timestamp).toDate(),
+              (value as Timestamp?)?.toDate(),
             ),
           ) ??
           {},
@@ -44,20 +44,20 @@ class ChatModel {
   final String id;
   final List<UserModel> participants;
   final MessageModel? lastMessage;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final Map<String, bool> typing;
-  final Map<String, DateTime> lastSeen;
+  final Map<String, DateTime?> lastSeen;
   Map<String, dynamic> toJson() => _$ChatModelToJson(this);
 
   Map<String, dynamic> toFirestore() => {
         'participantIds': participants.map((p) => p.id).toList(),
         'lastMessageId': lastMessage?.id,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'updatedAt': Timestamp.fromDate(updatedAt),
+        'createdAt': Timestamp.fromDate(createdAt?? DateTime.now()),
+        'updatedAt': Timestamp.fromDate(updatedAt ?? DateTime.now()),
         'typing': typing,
         'lastSeen': lastSeen.map(
-          (key, value) => MapEntry(key, Timestamp.fromDate(value)),
+          (key, value) => MapEntry(key, Timestamp.fromDate(value ?? DateTime.now())),
         ),
       };
 

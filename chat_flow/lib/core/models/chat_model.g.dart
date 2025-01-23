@@ -28,8 +28,8 @@ Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'id': instance.id,
       'participants': instance.participants,
       'lastMessage': instance.lastMessage,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
       'typing': instance.typing,
-      'lastSeen': instance.lastSeen.map((k, e) => MapEntry(k, e.toIso8601String())),
+      'lastSeen': instance.lastSeen.map((k, e) => MapEntry(k, e?.toIso8601String())),
     };
