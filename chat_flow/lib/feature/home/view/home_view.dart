@@ -8,6 +8,7 @@ import 'package:chat_flow/feature/chat/view/chat_view.dart';
 import 'package:chat_flow/feature/users/view/users_view.dart';
 import 'package:chat_flow/utils/extension/string_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
 part '../widget/chat_list_tile_widget.dart';
 
 class HomeView extends StatefulWidget {
@@ -36,16 +37,23 @@ class _HomeViewState extends State<HomeView> {
       body: StreamBuilderWidget(
         stream: _chatService.getUserChats(),
         builder: (context, List<ChatModel>? chats) {
-          return ListView.builder(
-            itemCount: chats?.length ?? 0,
-            itemBuilder: (context, index) {
-              final chat = chats![index];
-              return _ChatListTileWidget(
-                index: index,
-                chat: chat,
-              );
-            },
-          );
+          return (chats?.isNotEmpty ?? false)
+              ? ListView.builder(
+                  itemCount: chats?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final chat = chats![index];
+                    return _ChatListTileWidget(
+                      index: index,
+                      chat: chat,
+                    );
+                  },
+                )
+              : Center(
+                  child: CustomText(
+                    'Sohbet Bulunamadı',
+                    textStyle: context.general.textTheme.bodyLarge,
+                  ),
+                );
         },
       ),
       floatingActionButton: const _FloatingButtonWidget(),

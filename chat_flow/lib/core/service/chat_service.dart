@@ -106,8 +106,8 @@ class ChatService implements IChatService {
       'participantIds': participantIds,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
-      'typing': Map,
-      'lastSeen': Map,
+      'typing': {},
+      'lastSeen': {},
     });
 
     final participantDocs = await Future.wait(
@@ -189,16 +189,16 @@ class ChatService implements IChatService {
       if (chatDoc.exists) {
         log('data var');
         // Chat belgesinden lastMessageId'yi alıyoruz
-        final lastMessageId = chatDoc.data()?['lastMessageId'] as String;
+        final lastMessageId = chatDoc.data()?['lastMessageId'] as String?;
         log('lastMessageId: $lastMessageId');
-        if (lastMessageId.isNotEmpty) {
+        if (lastMessageId?.isNotEmpty ?? false) {
           // Mesajı almak için lastMessageId'yi kullanıyoruz
           final messageDoc =
               await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).get();
 
           if (messageDoc.exists) {
             // Mesajın senderId'si ile currentUserId'yi karşılaştırıyoruz
-            final senderId = messageDoc.data()?['senderId'] as String;
+            final senderId = messageDoc.data()?['senderId'] as String?;
 
             if (senderId != currentUserId) {
               // Eğer senderId farklıysa isRead alanını true yapıyoruz

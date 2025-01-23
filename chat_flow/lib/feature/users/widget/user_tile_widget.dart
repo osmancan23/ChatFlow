@@ -22,6 +22,7 @@ class _UserTileWidgetState extends State<_UserTileWidget> {
     _chatBloc = context.read<ChatBloc>();
 
     _chatSubscription = _chatBloc.stream.listen((state) {
+      log('State: $state');
       if (state is ChatCreated) {
         if (mounted) {
           locator<NavigationService>().navigateToPage(context: context, page: ChatView(chatId: state.chat.id));

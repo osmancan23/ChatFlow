@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
@@ -14,6 +16,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         final chat = await _chatService.createChat(event.participantIds);
         emit(ChatCreated(chat));
       } catch (e) {
+        log('Error: $e');
         emit(ChatError(e.toString()));
       }
     });
