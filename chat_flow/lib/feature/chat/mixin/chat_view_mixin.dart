@@ -8,7 +8,7 @@ mixin _ChatViewMixin on State<ChatView> {
 
   @override
   void initState() {
-    _chatService = ChatService();
+    _chatService = locator<ChatService>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _chatService.markMessageAsRead(widget.chatId);
 

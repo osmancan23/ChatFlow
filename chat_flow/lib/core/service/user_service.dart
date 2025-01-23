@@ -9,7 +9,9 @@ abstract class IUserService {
 
   Future<void> updateUserProfile(UserModel user);
 
-  Future<UserModel?> getUserProfile(String userId);
+  Future<UserModel?> getChatUserProfile(String chatId);
+
+  
 }
 
 class UserService extends IUserService {
@@ -37,7 +39,7 @@ class UserService extends IUserService {
   }
 
   @override
-  Future<UserModel?> getUserProfile(String userId) async {
+  Future<UserModel?> getChatUserProfile(String userId) async {
     try {
       final docSnapshot = await _firestore.collection('users').doc(userId).get();
 

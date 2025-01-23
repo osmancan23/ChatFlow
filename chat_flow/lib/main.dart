@@ -1,4 +1,5 @@
 import 'package:chat_flow/core/dependcy_injector.dart';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
 
 import 'package:chat_flow/feature/splash/view/splash_view.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
+  setupLocator();
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(

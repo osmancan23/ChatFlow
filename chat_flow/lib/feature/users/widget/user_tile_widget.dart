@@ -1,6 +1,6 @@
 part of '../view/users_view.dart';
 
-class _UserTileWidget extends StatelessWidget {
+class _UserTileWidget extends StatefulWidget {
   const _UserTileWidget({
     required this.index,
     required this.user,
@@ -8,11 +8,41 @@ class _UserTileWidget extends StatelessWidget {
 
   final int index;
   final UserModel user;
+
+  @override
+  State<_UserTileWidget> createState() => _UserTileWidgetState();
+}
+
+class _UserTileWidgetState extends State<_UserTileWidget> {
+  late ChatBloc _chatBloc;
+  late StreamSubscription<ChatState> _chatSubscription;
+
+  @override
+  void initState() {
+    _chatBloc = context.read<ChatBloc>();
+
+    _chatSubscription = _chatBloc.stream.listen((state) {
+      if (state is ChatCreated) {
+        if (mounted) {
+          locator<NavigationService>().navigateToPage(context: context, page: ChatView(chatId: state.chat.id));
+        }
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _chatSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: Duration(milliseconds: 300 + (index * 50)),
+      duration: Duration(milliseconds: 300 + (widget.index * 50)),
       curve: Curves.easeOutQuad,
       builder: (context, value, child) {
         return Transform.translate(
@@ -39,7 +69,7 @@ class _UserTileWidget extends StatelessWidget {
         child: ListTile(
           contentPadding: const EdgeInsets.all(8),
           leading: Hero(
-            tag: 'user_$index',
+            tag: 'user_${widget.index}',
             child: Container(
               width: 50,
               height: 50,
@@ -61,17 +91,17 @@ class _UserTileWidget extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                user.fullName,
-                style: const TextStyle(
+              CustomText(
+                widget.user.fullName,
+                textStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                user.email,
-                style: TextStyle(
+              CustomText(
+                widget.user.email,
+                textStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
                 ),
@@ -87,15 +117,14 @@ class _UserTileWidget extends StatelessWidget {
             ),
             child: IconButton(
               onPressed: () async {
-                try {
-                  final IChatService chatService = ChatService();
-                  await chatService.createChat([
-                    FirebaseAuth.instance.currentUser!.uid,
-                    user.id,
-                  ]);
-                } catch (e) {
-                  print(e);
-                }
+                context.read<ChatBloc>().add(
+                      CreateChat(
+                        participantIds: [
+                          FirebaseAuth.instance.currentUser!.uid,
+                          widget.user.id,
+                        ],
+                      ),
+                    );
               },
               icon: const Icon(
                 Icons.chat_bubble_outline,
@@ -104,12 +133,6 @@ class _UserTileWidget extends StatelessWidget {
               ),
             ),
           ),
-          onTap: () {
-            /*NavigationService.instance.navigateToPage(
-              context: context,
-              page: ChatView(chatId: index),
-            );*/
-          },
         ),
       ),
     );

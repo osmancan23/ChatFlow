@@ -19,14 +19,14 @@ class _ChatAppbarWidgetState extends State<_ChatAppbarWidget> {
 
   @override
   void initState() {
-    _chatService = ChatService();
+    _chatService = locator<ChatService>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilderWidget(
-      stream: _chatService.streamOtherUserData(widget.chatId),
+      stream: _chatService.getChatOtherUser(widget.chatId),
       builder: (context, data) {
         return AppBar(
           centerTitle: false,

@@ -1,4 +1,6 @@
 import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
+import 'package:chat_flow/core/components/text/custom_text.dart';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
@@ -20,7 +22,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    _chatService = ChatService();
+    _chatService = locator<ChatService>();
 
     super.initState();
   }
@@ -65,7 +67,7 @@ class _FloatingButtonWidget extends StatelessWidget {
           scale: value,
           child: FloatingActionButton(
             onPressed: () {
-              NavigationService.instance.navigateToPage(
+              locator<NavigationService>().navigateToPage(
                 context: context,
                 page: const UsersView(),
               );

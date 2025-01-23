@@ -18,7 +18,7 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
 
   @override
   void initState() {
-    _chatService = ChatService();
+    _chatService = locator<ChatService>();
     super.initState();
   }
 
@@ -52,9 +52,9 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
                 maxLines: null,
                 onChanged: (value) async {
                   if (value.isNotEmpty) {
-                    await _chatService.updateChatTypingStatus(widget.chatId, true);
+                    await _chatService.updateChatTypingStatus(chatId: widget.chatId, isTyping: true);
                   } else {
-                    await _chatService.updateChatTypingStatus(widget.chatId, false);
+                    await _chatService.updateChatTypingStatus(chatId: widget.chatId, isTyping: false);
                   }
                 },
               ),

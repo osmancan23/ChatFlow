@@ -6,7 +6,7 @@ mixin _UsersViewMixin on State<UsersView> {
   late IChatService _chatService;
   @override
   void initState() {
-    _chatService = ChatService();
+    _chatService = locator<ChatService>();
     super.initState();
   }
 

@@ -18,9 +18,9 @@ mixin _SplashViewMixin on State<SplashView> {
       log(state.toString());
       if (mounted) {
         if (state is AuthSuccess) {
-          NavigationService.instance.navigateToPageClear(context: context, page: const MainView());
+          locator<NavigationService>().navigateToPageClear(context: context, page: const MainView());
         } else if (state is AuthFailure || state is AuthInitial) {
-          NavigationService.instance.navigateToPageClear(context: context, page: const LoginView());
+          locator<NavigationService>().navigateToPageClear(context: context, page: const LoginView());
         }
       }
     });

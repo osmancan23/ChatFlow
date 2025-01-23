@@ -35,44 +35,21 @@ class _ChatListTileWidget extends StatelessWidget {
                 'https://static.vecteezy.com/system/resources/previews/004/899/680/non_2x/beautiful-blonde-woman-with-makeup-avatar-for-a-beauty-salon-illustration-in-the-cartoon-style-vector.jpg',
               ),
             ),
-            title: Text('Kullanıcı ${index + 1}'),
-            subtitle: const Text('Son mesaj...'),
+            title: CustomText(chat.participants.last.fullName),
+            subtitle: CustomText(chat.lastMessage?.content),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
+                CustomText(
                   chat.updatedAt.toIso8601String().formatDateDifference,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  textStyle: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 4),
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0, end: 1),
-                  duration: Duration(milliseconds: 300 + (index * 100)),
-                  builder: (context, value, child) {
-                    return Transform.scale(
-                      scale: value,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Text(
-                          '2', // TODO: Replace with actual unread count
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ],
             ),
             onTap: () {
-              NavigationService.instance.navigateToPage(
+              locator<NavigationService>().navigateToPage(
                 context: context,
                 page: ChatView(chatId: chat.id),
               );

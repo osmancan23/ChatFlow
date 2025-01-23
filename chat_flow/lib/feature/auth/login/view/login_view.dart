@@ -3,6 +3,7 @@ import 'package:chat_flow/core/components/text/custom_text.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/constants/enums/lottie_enums.dart';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
@@ -28,7 +29,7 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccess) {
-          NavigationService.instance.navigateToPageClear(
+          locator<NavigationService>().navigateToPageClear(
             context: context,
             page: const MainView(),
           );
@@ -98,7 +99,7 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
                     const CustomText(_LoginViewStrings.noAccountText),
                     TextButton(
                       onPressed: () {
-                        NavigationService.instance.navigateToPage(
+                        locator<NavigationService>().navigateToPage(
                           context: context,
                           page: const RegisterView(),
                         );

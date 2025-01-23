@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-class NavigationService {
-  NavigationService._init();
-  static final NavigationService _instance = NavigationService._init();
-  static NavigationService get instance => _instance;
-
+@immutable
+final class NavigationService {
   Future<void> navigateToPage({
     required BuildContext context,
     required Widget page,

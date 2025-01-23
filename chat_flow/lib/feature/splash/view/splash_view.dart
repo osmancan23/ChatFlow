@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat_flow/core/constants/enums/lottie_enums.dart';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';

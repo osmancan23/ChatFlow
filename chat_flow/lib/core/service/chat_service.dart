@@ -5,28 +5,28 @@ import 'package:chat_flow/core/models/message_model.dart';
 import 'package:chat_flow/core/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 abstract class IChatService {
   // Sohbet işlemleri
   Stream<List<ChatModel>> getUserChats();
+
   Future<ChatModel> createChat(List<String> participantIds);
-  Future<void> deleteChat(String chatId);
-  Future<void> updateChatTypingStatus(String chatId, bool isTyping);
-  Future<void> updateChatLastSeen(String chatId);
+
+  Future<void> updateChatTypingStatus({required String chatId, required bool isTyping});
 
   // Mesaj işlemleri
   Stream<List<MessageModel>> getChatMessages(String chatId);
-  Future<MessageModel> sendMessage(String chatId, String content, {String? imageUrl});
-  Future<void> deleteMessage(String chatId, String messageId);
+  Future<MessageModel> sendMessage(String chatId, String content);
   Future<void> markMessageAsRead(String chatId);
 
   // Kullanıcı işlemleri
   Stream<List<UserModel>> getAvailableUsers();
-  Future<List<UserModel>> searchUsers(String query);
 
   Stream<bool> listenToOtherUserTypingStatus(String chatId);
 
-  Stream<UserModel?> streamOtherUserData(String chatId);
+  Stream<UserModel?> getChatOtherUser(String chatId);
   Stream<bool> getLastMessageReadStatus(String chatId);
 }
 
@@ -70,7 +70,6 @@ class ChatService implements IChatService {
               await _firestore.collection('chats').doc(doc.id).collection('messages').doc(lastMessageId).get();
           if (messageDoc.exists) {
             lastMessage = MessageModel.fromFirestore(messageDoc);
-            
           }
         }
 
@@ -89,12 +88,26 @@ class ChatService implements IChatService {
 
   @override
   Future<ChatModel> createChat(List<String> participantIds) async {
+    // Check if a chat already exists with the same participants
+    final existingChats =
+        await _firestore.collection('chats').where('participantIds', arrayContainsAny: participantIds).get();
+
+    for (final chat in existingChats.docs) {
+      final chatParticipantIds = List<String>.from(chat['participantIds'] as List);
+      if (chatParticipantIds.length == participantIds.length &&
+          chatParticipantIds.every((id) => participantIds.contains(id))) {
+        // Chat already exists with the same participants
+        return ChatModel.fromFirestore(chat, participants: []);
+      }
+    }
+
+    // Create a new chat if no existing chat is found
     final chatDoc = await _firestore.collection('chats').add({
       'participantIds': participantIds,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
-      'typing': {},
-      'lastSeen': {},
+      'typing': Map,
+      'lastSeen': Map,
     });
 
     final participantDocs = await Future.wait(
@@ -117,39 +130,14 @@ class ChatService implements IChatService {
   }
 
   @override
-  Future<void> deleteChat(String chatId) async {
-    // Önce tüm mesajları sil
-    final messages = await _firestore.collection('chats').doc(chatId).collection('messages').get();
-
-    final batch = _firestore.batch();
-    for (final message in messages.docs) {
-      batch.delete(message.reference);
-    }
-
-    // Sonra sohbeti sil
-    batch.delete(_firestore.collection('chats').doc(chatId));
-    await batch.commit();
-  }
-
-  @override
-  Future<void> updateChatTypingStatus(
-    String chatId,
-    bool isTyping,
-  ) async {
+  Future<void> updateChatTypingStatus({
+    required String chatId,
+    required bool isTyping,
+  }) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     await _firestore.collection('chats').doc(chatId).update({
       'typing.$userId': isTyping,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  }
-
-  @override
-  Future<void> updateChatLastSeen(String chatId) async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-
-    await _firestore.collection('chats').doc(chatId).update({
-      'lastSeen.$userId': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -170,9 +158,8 @@ class ChatService implements IChatService {
   @override
   Future<MessageModel> sendMessage(
     String chatId,
-    String content, {
-    String? imageUrl,
-  }) async {
+    String content,
+  ) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     final messageDoc = await _firestore.collection('chats').doc(chatId).collection('messages').add({
@@ -180,7 +167,6 @@ class ChatService implements IChatService {
       'content': content,
       'timestamp': FieldValue.serverTimestamp(),
       'isRead': false,
-      if (imageUrl != null) 'imageUrl': imageUrl,
     });
 
     // Sohbeti güncelle
@@ -191,28 +177,6 @@ class ChatService implements IChatService {
 
     final messageSnapshot = await messageDoc.get();
     return MessageModel.fromFirestore(messageSnapshot);
-  }
-
-  @override
-  Future<void> deleteMessage(String chatId, String messageId) async {
-    await _firestore.collection('chats').doc(chatId).collection('messages').doc(messageId).delete();
-
-    // Son mesaj silindiyse, bir önceki mesajı son mesaj olarak ayarla
-    final chatDoc = await _firestore.collection('chats').doc(chatId).get();
-    if (chatDoc.data()?['lastMessageId'] == messageId) {
-      final lastMessage = await _firestore
-          .collection('chats')
-          .doc(chatId)
-          .collection('messages')
-          .orderBy('timestamp', descending: true)
-          .limit(1)
-          .get();
-
-      await _firestore.collection('chats').doc(chatId).update({
-        'lastMessageId': lastMessage.docs.isEmpty ? null : lastMessage.docs.first.id,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    }
   }
 
   @override
@@ -242,15 +206,9 @@ class ChatService implements IChatService {
                 'isRead': true,
               });
             }
-          } else {
-            print('Mesaj bulunamadı.');
-          }
-        } else {
-          print('Chat belgesinde lastMessageId bulunamadı.');
-        }
-      } else {
-        print('Chat belgesi bulunamadı.');
-      }
+          } else {}
+        } else {}
+      } else {}
     } catch (e) {
       // Hata durumunda hata mesajını yazdırıyoruz
       print('Son mesajı okundu olarak işaretlerken hata oluştu: $e');
@@ -272,25 +230,6 @@ class ChatService implements IChatService {
               )
               .toList(),
         );
-  }
-
-  @override
-  Future<List<UserModel>> searchUsers(String query) async {
-    final queryLower = query.toLowerCase();
-    final snapshot = await _firestore.collection('users').get();
-
-    return snapshot.docs
-        .map(
-          (doc) => UserModel.fromMap({
-            'id': doc.id,
-            ...doc.data(),
-          }),
-        )
-        .where(
-          (user) =>
-              user.fullName.toLowerCase().contains(queryLower) == true || user.email.toLowerCase().contains(queryLower),
-        )
-        .toList();
   }
 
   @override
@@ -318,12 +257,12 @@ class ChatService implements IChatService {
       final typingMap = snapshot.data()?['typing'] as Map;
 
       // Diğer kullanıcının typing durumunu döndür
-      return typingMap[otherUserId] as bool;
+      return typingMap[otherUserId] as bool? ?? false;
     });
   }
 
   @override
-  Stream<UserModel?> streamOtherUserData(String chatId) {
+  Stream<UserModel?> getChatOtherUser(String chatId) {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     // Sohbet belgesini dinle

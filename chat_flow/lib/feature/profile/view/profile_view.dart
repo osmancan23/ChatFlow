@@ -1,11 +1,14 @@
 import 'dart:async';
 
-import 'package:chat_flow/core/bloc/bloc/user_bloc.dart';
+import 'package:chat_flow/core/bloc/user/user_bloc.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
+import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/core/service/user_service.dart';
 import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
+import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +24,28 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  late StreamSubscription<AuthState> _authSubscription;
+
+  @override
+  void initState() {
+    _authSubscription = context.read<AuthBloc>().stream.listen((state) {
+      if (state is AuthInitial) {
+        if (mounted) {
+          locator<NavigationService>().navigateToPageClear(context: context, page: const LoginView());
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _authSubscription.cancel();
+    });
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,9 +66,7 @@ class _ProfileViewState extends State<ProfileView> {
 }
 
 class _ProfileBodyWidget extends StatefulWidget {
-  const _ProfileBodyWidget({
-    super.key,
-  });
+  const _ProfileBodyWidget();
 
   @override
   State<_ProfileBodyWidget> createState() => _ProfileBodyWidgetState();
