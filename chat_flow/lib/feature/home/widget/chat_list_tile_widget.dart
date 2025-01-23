@@ -31,9 +31,13 @@ class _ChatListTileWidget extends StatelessWidget {
           color: Colors.transparent,
           child: ListTile(
             leading: CircleAvatar(
-              child: CacheNetworkImageWidget(imageUrl: chat.participants.last.profilePhoto),
+              child: CacheNetworkImageWidget(
+                imageUrl: _otherUser().profilePhoto,
+              ),
             ),
-            title: CustomText(chat.participants.last.fullName),
+            title: CustomText(
+              _otherUser().fullName,
+            ),
             subtitle: CustomText(chat.lastMessage?.content),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -57,4 +61,7 @@ class _ChatListTileWidget extends StatelessWidget {
       ),
     );
   }
+
+  UserModel _otherUser() =>
+      chat.participants.where((element) => element.id != FirebaseAuth.instance.currentUser!.uid).first;
 }
