@@ -4,6 +4,7 @@ mixin _ProfileViewMixin on State<_ProfileBodyWidget> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
+  File? _image;
   late UserBloc _userBloc;
   late StreamSubscription<UserState> _userSubscription;
   @override

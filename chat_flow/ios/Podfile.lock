@@ -1170,6 +1170,9 @@ PODS:
   - Firebase/Messaging (11.6.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 11.6.0)
+  - Firebase/Storage (11.6.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 11.6.0)
   - firebase_auth (5.4.1):
     - Firebase/Auth (= 11.6.0)
     - firebase_core
@@ -1179,6 +1182,10 @@ PODS:
     - Flutter
   - firebase_messaging (15.2.1):
     - Firebase/Messaging (= 11.6.0)
+    - firebase_core
+    - Flutter
+  - firebase_storage (12.4.1):
+    - Firebase/Storage (= 11.6.0)
     - firebase_core
     - Flutter
   - FirebaseAppCheckInterop (11.7.0)
@@ -1235,6 +1242,13 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
   - FirebaseSharedSwift (11.7.0)
+  - FirebaseStorage (11.6.0):
+    - FirebaseAppCheckInterop (~> 11.0)
+    - FirebaseAuthInterop (~> 11.0)
+    - FirebaseCore (~> 11.6.0)
+    - FirebaseCoreExtension (~> 11.6.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GTMSessionFetcher/Core (< 5.0, >= 3.4)
   - Flutter (1.0.0)
   - flutter_native_splash (2.4.3):
     - Flutter
@@ -1388,6 +1402,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
+  - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -1414,6 +1429,7 @@ SPEC REPOS:
     - FirebaseInstallations
     - FirebaseMessaging
     - FirebaseSharedSwift
+    - FirebaseStorage
     - GoogleDataTransport
     - GoogleUtilities
     - "gRPC-C++"
@@ -1437,6 +1453,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
+  firebase_storage:
+    :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
   flutter_native_splash:
@@ -1466,6 +1484,7 @@ SPEC CHECKSUMS:
   firebase_auth: 9927cecefe4daaf92b0fbe5d1d283e9329445177
   firebase_core: e2aa06dbd854d961f8ce46c2e20933bee1bf2d2b
   firebase_messaging: 96cf6d67121b3f39746b2a4f29a26c0eee4af70e
+  firebase_storage: 5f8f929f2b1a4f3d37d32ef6b8c474db40bfbe13
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
   FirebaseAuth: 0304982cfe00df8d49bf533bc4becd3de36c7122
   FirebaseAuthInterop: a6973d72aa242ea88ffb6be9c9b06c65455071da
@@ -1477,6 +1496,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: efc0946fc756e4d22d8113f7c761948120322e8c
   FirebaseMessaging: e1aca1fcc23e8b9eddb0e33f375ff90944623021
   FirebaseSharedSwift: a45efd84d60ebbfdcdbaebc66948af3630459e62
+  FirebaseStorage: 52fb65a69d3e87675186881a08e2a5db86452ace
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_native_splash: f71420956eb811e6d310720fee915f1d42852e7a
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12

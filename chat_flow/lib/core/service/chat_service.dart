@@ -106,7 +106,9 @@ class ChatService implements IChatService {
       'participantIds': participantIds,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
+      // ignore: inference_failure_on_collection_literal
       'typing': {},
+      // ignore: inference_failure_on_collection_literal
       'lastSeen': {},
     });
 

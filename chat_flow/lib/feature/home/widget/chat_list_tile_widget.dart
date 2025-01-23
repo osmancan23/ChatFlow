@@ -30,10 +30,8 @@ class _ChatListTileWidget extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: ListTile(
-            leading: const CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://static.vecteezy.com/system/resources/previews/004/899/680/non_2x/beautiful-blonde-woman-with-makeup-avatar-for-a-beauty-salon-illustration-in-the-cartoon-style-vector.jpg',
-              ),
+            leading: CircleAvatar(
+              child: CacheNetworkImageWidget(imageUrl: chat.participants.last.profilePhoto),
             ),
             title: CustomText(chat.participants.last.fullName),
             subtitle: CustomText(chat.lastMessage?.content),

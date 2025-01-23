@@ -1,22 +1,36 @@
+part of '../view/profile_view.dart';
 
-part of "../view/profile_view.dart";
-class _ProfileAvatarWidget extends StatelessWidget {
-  const _ProfileAvatarWidget();
+// ignore: must_be_immutable
+class _ProfileAvatarWidget extends StatefulWidget {
+  const _ProfileAvatarWidget({required this.onImageSelected, this.imageUrl});
+  final void Function(File image) onImageSelected;
+  final String? imageUrl;
+
+  @override
+  State<_ProfileAvatarWidget> createState() => _ProfileAvatarWidgetState();
+}
+
+class _ProfileAvatarWidgetState extends State<_ProfileAvatarWidget> {
+  File? _image;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 60,
-          backgroundImage: NetworkImage(
-            'https://via.placeholder.com/120',
-          ),
+          child: _image != null ? Image.file(_image!) : CacheNetworkImageWidget(imageUrl: widget.imageUrl),
         ),
         IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.camera_alt),
+          onPressed: () async {
+            _image = await _choiseImage(context);
+            if (_image != null) {
+              widget.onImageSelected(_image!);
+            }
+            setState(() {});
+          },
+          icon: const Icon(Icons.image),
           style: IconButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,
             foregroundColor: Colors.white,
@@ -24,5 +38,21 @@ class _ProfileAvatarWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<File?> _choiseImage(BuildContext context) async {
+    String? imagePath;
+    bool? isSuccess = false;
+    final imagePicker = ImagePicker();
+    XFile? xfile;
+    try {
+      xfile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+      imagePath = xfile?.path;
+      isSuccess = true;
+      return imagePath != null && isSuccess == true ? File(imagePath) : null;
+    } catch (e) {
+      return null;
+    }
   }
 }

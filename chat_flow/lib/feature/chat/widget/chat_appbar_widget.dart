@@ -36,11 +36,9 @@ class _ChatAppbarWidgetState extends State<_ChatAppbarWidget> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    'https://static.vecteezy.com/system/resources/previews/004/899/680/non_2x/beautiful-blonde-woman-with-makeup-avatar-for-a-beauty-salon-illustration-in-the-cartoon-style-vector.jpg',
-                  ),
+                CircleAvatar(
                   radius: 20,
+                  child: CacheNetworkImageWidget(imageUrl: data?.profilePhoto),
                 ),
                 const SizedBox(width: 12),
                 Flexible(

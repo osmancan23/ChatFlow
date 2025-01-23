@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:chat_flow/core/bloc/user/user_bloc.dart';
+import 'package:chat_flow/core/components/cacheNetworkImage/cache_network_image_widget.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
@@ -12,6 +15,7 @@ import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 part '../mixin/provile_view_mixin.dart';
 part '../widget/profile_avatar_widget.dart';
 part '../widget/notification_switch_widget.dart';
@@ -80,6 +84,7 @@ class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileVie
       child: BlocConsumer<UserBloc, UserState>(
         bloc: _userBloc,
         listener: (context, state) {
+          log('UserBloc state: $state');
           if (state is UserProfileUpdated) {
             _userBloc.add(FetchCurrentUserProfile());
             ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +107,12 @@ class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileVie
           if (state is CurrentUserProfileLoaded) {
             return Column(
               children: [
-                const _ProfileAvatarWidget(),
+                _ProfileAvatarWidget(
+                  imageUrl: state.user.profilePhoto,
+                  onImageSelected: (image) {
+                    _image = image;
+                  },
+                ),
                 const SizedBox(height: PaddingConstants.large),
                 Form(
                   key: _formKey,
@@ -136,6 +146,7 @@ class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileVie
                                   fullName: _nameController.text,
                                   bio: _bioController.text,
                                 ),
+                                _image,
                               ),
                             );
                           }
