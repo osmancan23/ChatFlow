@@ -50,6 +50,13 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
                   border: InputBorder.none,
                 ),
                 maxLines: null,
+                onChanged: (value) async {
+                  if (value.isNotEmpty) {
+                    await _chatService.updateChatTypingStatus(widget.chatId, true);
+                  } else {
+                    await _chatService.updateChatTypingStatus(widget.chatId, false);
+                  }
+                },
               ),
             ),
             IconButton(

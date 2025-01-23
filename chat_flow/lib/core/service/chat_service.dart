@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chat_flow/core/models/chat_model.dart';
 import 'package:chat_flow/core/models/message_model.dart';
 import 'package:chat_flow/core/models/user_model.dart';
@@ -16,11 +18,16 @@ abstract class IChatService {
   Stream<List<MessageModel>> getChatMessages(String chatId);
   Future<MessageModel> sendMessage(String chatId, String content, {String? imageUrl});
   Future<void> deleteMessage(String chatId, String messageId);
-  Future<void> markMessageAsRead(String chatId, String messageId);
+  Future<void> markMessageAsRead(String chatId);
 
   // Kullanıcı işlemleri
   Stream<List<UserModel>> getAvailableUsers();
   Future<List<UserModel>> searchUsers(String query);
+
+  Stream<bool> listenToOtherUserTypingStatus(String chatId);
+
+  Stream<UserModel?> streamOtherUserData(String chatId);
+  Stream<bool> getLastMessageReadStatus(String chatId);
 }
 
 class ChatService implements IChatService {
@@ -63,6 +70,7 @@ class ChatService implements IChatService {
               await _firestore.collection('chats').doc(doc.id).collection('messages').doc(lastMessageId).get();
           if (messageDoc.exists) {
             lastMessage = MessageModel.fromFirestore(messageDoc);
+            
           }
         }
 
@@ -208,10 +216,46 @@ class ChatService implements IChatService {
   }
 
   @override
-  Future<void> markMessageAsRead(String chatId, String messageId) async {
-    await _firestore.collection('chats').doc(chatId).collection('messages').doc(messageId).update({
-      'isRead': true,
-    });
+  Future<void> markMessageAsRead(String chatId) async {
+    try {
+      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      // Chat belgesini alarak lastMessageId'yi alıyoruz
+      final chatDoc = await _firestore.collection('chats').doc(chatId).get();
+
+      if (chatDoc.exists) {
+        log('data var');
+        // Chat belgesinden lastMessageId'yi alıyoruz
+        final lastMessageId = chatDoc.data()?['lastMessageId'] as String;
+        log('lastMessageId: $lastMessageId');
+        if (lastMessageId.isNotEmpty) {
+          // Mesajı almak için lastMessageId'yi kullanıyoruz
+          final messageDoc =
+              await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).get();
+
+          if (messageDoc.exists) {
+            // Mesajın senderId'si ile currentUserId'yi karşılaştırıyoruz
+            final senderId = messageDoc.data()?['senderId'] as String;
+
+            if (senderId != currentUserId) {
+              // Eğer senderId farklıysa isRead alanını true yapıyoruz
+              await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).update({
+                'isRead': true,
+              });
+            }
+          } else {
+            print('Mesaj bulunamadı.');
+          }
+        } else {
+          print('Chat belgesinde lastMessageId bulunamadı.');
+        }
+      } else {
+        print('Chat belgesi bulunamadı.');
+      }
+    } catch (e) {
+      // Hata durumunda hata mesajını yazdırıyoruz
+      print('Son mesajı okundu olarak işaretlerken hata oluştu: $e');
+      throw Exception('Son mesajı okundu olarak işaretlemek başarısız oldu');
+    }
   }
 
   @override
@@ -247,5 +291,105 @@ class ChatService implements IChatService {
               user.fullName.toLowerCase().contains(queryLower) == true || user.email.toLowerCase().contains(queryLower),
         )
         .toList();
+  }
+
+  @override
+  Stream<bool> listenToOtherUserTypingStatus(String chatId) {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    return _firestore.collection('chats').doc(chatId).snapshots().map((snapshot) {
+      // Eğer doküman yoksa false döner
+      if (!snapshot.exists) return false;
+
+      // participantIds dizisini al
+      final participantIds = snapshot.data()?['participantIds'] as List?;
+
+      // Kendiniz haricindeki kullanıcıyı bulun
+      final otherUserId = participantIds
+          ?.firstWhere(
+            (id) => id != currentUserId,
+            orElse: () => '', // Eğer başka kullanıcı yoksa boş döner
+          )
+          .toString();
+
+      if (otherUserId?.isEmpty ?? false) return false;
+
+      // typing alanını al
+      final typingMap = snapshot.data()?['typing'] as Map;
+
+      // Diğer kullanıcının typing durumunu döndür
+      return typingMap[otherUserId] as bool;
+    });
+  }
+
+  @override
+  Stream<UserModel?> streamOtherUserData(String chatId) {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    // Sohbet belgesini dinle
+    return _firestore.collection('chats').doc(chatId).snapshots().asyncExpand((chatSnapshot) {
+      if (!chatSnapshot.exists) {
+        // Eğer chat belgesi yoksa boş bir stream döndür
+        return Stream.value(null);
+      }
+
+      // participantIds listesini güvenli bir şekilde kontrol et ve diğer kullanıcıyı bul
+      final rawParticipantIds = chatSnapshot.data()?['participantIds'];
+      final participantIds =
+          rawParticipantIds is List ? rawParticipantIds.map((id) => id.toString()).toList() : <String>[];
+
+      if (participantIds.isEmpty) {
+        return Stream.value(null);
+      }
+
+      // Diğer kullanıcının ID'sini al
+      final otherUserId = participantIds.firstWhere(
+        (id) => id != currentUserId,
+        orElse: () => '', // Eğer başka kullanıcı yoksa boş döner
+      );
+
+      if (otherUserId.isEmpty) {
+        return Stream.value(null);
+      }
+
+      // Kullanıcının `users` koleksiyonundaki belgesini dinle
+      return _firestore.collection('users').doc(otherUserId).snapshots().map((userSnapshot) {
+        if (!userSnapshot.exists) return null;
+
+        // Kullanıcıyı `UserModel` olarak döndür
+        return UserModel.fromMap(userSnapshot.data()!);
+      });
+    });
+  }
+
+  @override
+  Stream<bool> getLastMessageReadStatus(String chatId) {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    return _firestore
+        .collection('chats')
+        .doc(chatId)
+        .snapshots() // Chat dokümanındaki değişiklikleri dinliyoruz
+        .asyncMap((chatDoc) async {
+      if (chatDoc.exists) {
+        final lastMessageId = chatDoc.data()?['lastMessageId'] as String;
+
+        if (lastMessageId.isNotEmpty) {
+          // Son mesajın okundu durumunu almak için lastMessageId ile mesajı alıyoruz
+          final messageDoc =
+              await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).get();
+
+          if (messageDoc.exists) {
+            final senderId = messageDoc.data()?['senderId'] as String;
+
+            // Eğer mesajı gönderen kişi, şu anki kullanıcıysa okundu durumunu değiştirmiyoruz
+            if (senderId == currentUserId) {
+              // Eğer mesajı gönderen kullanıcı farklıysa, isRead'i kontrol ediyoruz
+              return messageDoc.data()?['isRead'] as bool;
+            }
+          }
+        }
+      }
+      return false;
+    });
   }
 }

@@ -6,10 +6,14 @@ mixin _ChatViewMixin on State<ChatView> {
   bool _isTyping = false;
   late IChatService _chatService;
 
-
   @override
   void initState() {
     _chatService = ChatService();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _chatService.markMessageAsRead(widget.chatId);
+
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
     super.initState();
     _messageController.addListener(_onTextChanged);
   }

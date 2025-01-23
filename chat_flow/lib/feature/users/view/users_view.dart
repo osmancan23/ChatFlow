@@ -1,7 +1,7 @@
 import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
 
 import 'package:chat_flow/core/models/user_model.dart';
-import 'package:chat_flow/core/service/chat_repository_impl.dart';
+import 'package:chat_flow/core/service/chat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 part '../mixin/users_view_mixin.dart';

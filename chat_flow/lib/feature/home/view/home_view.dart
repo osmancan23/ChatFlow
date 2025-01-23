@@ -1,7 +1,7 @@
 import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
-import 'package:chat_flow/core/service/chat_repository_impl.dart';
+import 'package:chat_flow/core/service/chat_service.dart';
 import 'package:chat_flow/feature/chat/view/chat_view.dart';
 import 'package:chat_flow/feature/users/view/users_view.dart';
 import 'package:chat_flow/utils/extension/string_extension.dart';
