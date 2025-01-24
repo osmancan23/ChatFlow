@@ -20,7 +20,17 @@ class _ProfileAvatarWidgetState extends State<_ProfileAvatarWidget> {
       children: [
         CircleAvatar(
           radius: 60,
-          child: _image != null ? Image.file(_image!) : CacheNetworkImageWidget(imageUrl: widget.imageUrl),
+          child: _image != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(80.r),
+                  child: Image.file(
+                    _image!,
+                    fit: BoxFit.fill,
+                    height: 120.h,
+                    width: 120.w,
+                  ),
+                )
+              : CacheNetworkImageWidget(imageUrl: widget.imageUrl),
         ),
         IconButton(
           onPressed: () async {

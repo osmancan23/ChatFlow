@@ -15,6 +15,7 @@ import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 part '../mixin/provile_view_mixin.dart';
 part '../widget/profile_avatar_widget.dart';
@@ -84,24 +85,7 @@ class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileVie
       child: BlocConsumer<UserBloc, UserState>(
         bloc: _userBloc,
         listener: (context, state) {
-          log('UserBloc state: $state');
-          if (state is UserProfileUpdated) {
-            _userBloc.add(FetchCurrentUserProfile());
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Profil güncellendi.'),
-              ),
-            );
-          } else if (state is UserProfileUpdateError) {
-            _userBloc.add(FetchCurrentUserProfile());
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
+          _listenBloc(state, context);
         },
         builder: (context, state) {
           if (state is CurrentUserProfileLoaded) {
@@ -130,11 +114,6 @@ class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileVie
                         labelText: _ProfileViewStrings.bioLabel,
                         maxLines: 3,
                         prefixIcon: const Icon(Icons.info_outline),
-                        validator: (value) => AppValidator.maxLength(
-                          value,
-                          200,
-                          message: _ProfileViewStrings.bioMaxLengthError,
-                        ),
                       ),
                       const SizedBox(height: PaddingConstants.large),
                       ElevatedButton(

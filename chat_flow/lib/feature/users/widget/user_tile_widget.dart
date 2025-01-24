@@ -76,17 +76,12 @@ class _UserTileWidgetState extends State<_UserTileWidget> {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://static.vecteezy.com/system/resources/previews/004/899/680/non_2x/beautiful-blonde-woman-with-makeup-avatar-for-a-beauty-salon-illustration-in-the-cartoon-style-vector.jpg',
-                  ),
-                  fit: BoxFit.cover,
-                ),
                 border: Border.all(
                   color: Colors.deepPurple.withOpacity(0.2),
                   width: 2,
                 ),
               ),
+              child: CacheNetworkImageWidget(imageUrl: widget.user.profilePhoto),
             ),
           ),
           title: Column(

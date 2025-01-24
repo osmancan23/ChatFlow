@@ -28,6 +28,27 @@ mixin _ProfileViewMixin on State<_ProfileBodyWidget> {
     _userSubscription.cancel();
     super.dispose();
   }
+
+  void _listenBloc(UserState state, BuildContext context) {
+    log('UserBloc state: $state');
+    if (state is UserProfileUpdated) {
+      _userBloc.add(FetchCurrentUserProfile());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profil güncellendi.'),
+        ),
+      );
+    } else if (state is UserProfileUpdateError) {
+      _userBloc.add(FetchCurrentUserProfile());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 }
 
 class _ProfileViewStrings {
@@ -40,7 +61,6 @@ class _ProfileViewStrings {
   static const String nameLabel = 'Ad Soyad';
   static const String bioLabel = 'Hakkımda';
   static const String updateButtonText = 'Profili Güncelle';
-  static const String bioMaxLengthError = 'Hakkımda en fazla 200 karakter olmalıdır';
 
   // Settings
   static const String notificationsLabel = 'Bildirimler';

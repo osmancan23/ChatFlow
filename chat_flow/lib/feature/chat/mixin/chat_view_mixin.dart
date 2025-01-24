@@ -12,7 +12,7 @@ mixin _ChatViewMixin on State<ChatView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _chatService.markMessageAsRead(widget.chatId);
 
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
     super.initState();
     _messageController.addListener(_onTextChanged);
