@@ -1,27 +1,23 @@
+import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:chat_flow/utils/tools/auth_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:chat_flow/core/models/user_model.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({
-    FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firestore,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        super(const AuthInitial()) {
+  AuthBloc(this._authService) : super(const AuthInitial()) {
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthCheckRequested>(_onAuthCheckRequested);
   }
-  final FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
+  final IAuthService _authService;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<void> _onAuthLoginRequested(
     AuthLoginRequested event,
@@ -29,11 +25,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: event.email,
-        password: event.password,
-      );
-      emit(const AuthSuccess());
+      final user = await _authService.login(email: event.email, password: event.password);
+
+      if (user != null) {
+        await _saveToken(user);
+        emit(const AuthSuccess());
+      } else {
+        emit(const AuthFailure('Kullanıcı bilgileri hatalı'));
+      }
     } on FirebaseAuthException catch (e) {
       emit(AuthFailure(AuthExceptionHandler.findExceptionType(e)));
     }
@@ -45,25 +44,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      // Firebase Auth ile kullanıcı oluştur
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      final user = await _authService.register(
         email: event.email,
         password: event.password,
-      );
-
-      // Kullanıcı modelini oluştur
-      final user = UserModel(
-        id: userCredential.user!.uid,
-        email: event.email,
         fullName: event.fullName,
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
       );
 
-      // Firestore'a kullanıcı bilgilerini kaydet
-      await _firestore.collection('users').doc(user.id).set(user.toMap());
-
-      emit(const AuthSuccess());
+      if (user != null) {
+        await _saveToken(user);
+        emit(const AuthSuccess());
+      } else {
+        emit(const AuthFailure('Kullanıcı kaydı sırasında bir hata oluştu'));
+      }
     } on FirebaseAuthException catch (e) {
       emit(AuthFailure(e.message ?? 'Bir hata oluştu'));
     } catch (e) {
@@ -77,15 +69,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      final userId = _firebaseAuth.currentUser?.uid;
-      if (userId != null) {
-        // Kullanıcı çıkış yaparken online durumunu güncelle
-        await _firestore.collection('users').doc(userId).update({
-          'isOnline': false,
-          'lastSeen': DateTime.now().toIso8601String(),
-        });
-      }
-      await _firebaseAuth.signOut();
+      await _authService.logout();
+      await _clearToken();
       emit(const AuthInitial());
     } catch (e) {
       emit(AuthFailure(e.toString()));
@@ -111,5 +96,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       emit(const AuthInitial());
     }
+  }
+
+  Future<void> _saveToken(User? user) async {
+    final token = await user?.getIdToken();
+    await _authService.updateToken(token);
+  }
+
+  Future<void> _clearToken() async {
+    await _authService.updateToken(null);
   }
 }

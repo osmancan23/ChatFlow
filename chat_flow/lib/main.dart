@@ -1,6 +1,5 @@
 import 'package:chat_flow/core/dependcy_injector.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
-import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
 
 import 'package:chat_flow/feature/splash/view/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   setupLocator();
-  
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
@@ -31,17 +30,14 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return BlocProvider(
-          create: (context) => AuthBloc(),
-          child: MaterialApp(
-            title: 'Chat Flow',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
-            ),
-            home: const SplashView(),
+        return MaterialApp(
+          title: 'Chat Flow',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
           ),
+          home: const SplashView(),
         );
       },
     );
