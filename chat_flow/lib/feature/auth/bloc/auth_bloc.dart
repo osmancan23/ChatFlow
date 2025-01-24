@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:chat_flow/utils/tools/auth_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'auth_event.dart';
@@ -29,7 +32,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (user != null) {
         await _saveToken(user);
+
         emit(const AuthSuccess());
+        await _updateFcmToken();
       } else {
         emit(const AuthFailure('Kullanıcı bilgileri hatalı'));
       }
@@ -53,6 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         await _saveToken(user);
         emit(const AuthSuccess());
+        await _updateFcmToken();
       } else {
         emit(const AuthFailure('Kullanıcı kaydı sırasında bir hata oluştu'));
       }
@@ -89,7 +95,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           'isOnline': true,
           'lastSeen': DateTime.now().toIso8601String(),
         });
+        await _saveToken(user);
+
         emit(const AuthSuccess());
+        await _updateFcmToken();
       } catch (e) {
         emit(const AuthSuccess());
       }
@@ -105,5 +114,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _clearToken() async {
     await _authService.updateToken(null);
+  }
+
+  Future<void> _updateFcmToken() async {
+    await FirebaseMessaging.instance.getToken().then((value) async {
+      log('FCMTOKEN: $value');
+    });
   }
 }

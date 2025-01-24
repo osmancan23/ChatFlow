@@ -1,17 +1,13 @@
 import 'package:chat_flow/core/dependcy_injector.dart';
-import 'package:chat_flow/core/init/locator/locator_service.dart';
+import 'package:chat_flow/core/init/app/app_init.dart';
 
 import 'package:chat_flow/feature/splash/view/splash_view.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
-  setupLocator();
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await ApplicationInit.instance?.appInit();
   runApp(
     MultiBlocProvider(
       providers: DependcyInjector.instance.globalBlocProviders,

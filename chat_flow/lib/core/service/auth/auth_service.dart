@@ -18,6 +18,8 @@ abstract class IAuthService {
   Future<void> updateToken(String? token);
 
   Future<void> updateTokenFromStorage();
+
+
 }
 
 class AuthService extends IAuthService {

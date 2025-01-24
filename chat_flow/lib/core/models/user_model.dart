@@ -43,8 +43,6 @@ class UserModel {
   final String createdAt;
   String updatedAt;
 
-  get imageUrl => null;
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
