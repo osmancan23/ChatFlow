@@ -64,8 +64,6 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
                 if (widget._messageController.text.isNotEmpty) {
                   try {
                     await _chatService.sendMessage(widget.chatId, widget._messageController.text);
-                    await locator<NotificationManager>()
-                        .sendMessage('xMOquntA5la00cGoGQaiaOprqWs1', widget._messageController.text, 'Mahsun');
                   } catch (e) {
                     print(e);
                   }

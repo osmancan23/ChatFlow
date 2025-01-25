@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:chat_flow/core/init/locale_storage/locale_storage_manager.dart';
 import 'package:chat_flow/core/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 @immutable
 abstract class IAuthService {
@@ -31,6 +33,17 @@ class AuthService extends IAuthService {
       email: email,
       password: password,
     );
+
+    // Platform bilgisini güncelle
+    if (userCrendtial.user != null) {
+      final platform = Platform.isIOS ? 'ios' : 'android';
+      await _firebaseFirestore.collection('users').doc(userCrendtial.user!.uid).update({
+        'platform': platform,
+        'isOnline': true,
+        'lastSeen': DateTime.now().toIso8601String(),
+      });
+    }
+
     return userCrendtial.user;
   }
 
@@ -42,12 +55,15 @@ class AuthService extends IAuthService {
     );
 
     // Kullanıcı modelini oluştur
+    final platform = Platform.isIOS ? 'ios' : 'android';
     final user = UserModel(
       id: userCredential.user!.uid,
       email: email,
       fullName: fullName,
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
+      platform: platform,
+      isOnline: true,
     );
 
     await _firebaseFirestore.collection('users').doc(user.id).set(user.toMap());

@@ -12,6 +12,8 @@ class UserModel {
     this.isOnline = false,
     this.lastSeen,
     this.chatIds = const [],
+    this.notificationsEnabled = true,
+    this.platform,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -26,6 +28,8 @@ class UserModel {
       chatIds: (map['chatIds'] as List).map((e) => e as String).toList(),
       createdAt: map['createdAt'] as String,
       updatedAt: map['updatedAt'] as String,
+      notificationsEnabled: map['notificationsEnabled'] as bool? ?? true,
+      platform: map['platform'] as String?,
     );
   }
 
@@ -42,6 +46,8 @@ class UserModel {
   List<String> chatIds;
   final String createdAt;
   String updatedAt;
+  bool notificationsEnabled;
+  String? platform; // 'ios' veya 'android'
 
   Map<String, dynamic> toMap() {
     return {
@@ -55,6 +61,8 @@ class UserModel {
       'chatIds': chatIds,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'notificationsEnabled': notificationsEnabled,
+      'platform': platform,
     };
   }
 
@@ -69,6 +77,8 @@ class UserModel {
     List<String>? chatIds,
     String? createdAt,
     String? updatedAt,
+    bool? notificationsEnabled,
+    String? platform,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -81,6 +91,8 @@ class UserModel {
       chatIds: chatIds ?? this.chatIds,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      platform: platform ?? this.platform,
     );
   }
 }

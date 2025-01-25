@@ -1,11 +1,14 @@
 import 'dart:developer';
 
+import 'package:chat_flow/core/init/locator/locator_service.dart';
+import 'package:chat_flow/core/init/notification/notification_manager.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
 import 'package:chat_flow/core/models/message_model.dart';
 import 'package:chat_flow/core/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 @immutable
 abstract class IChatService {
@@ -176,6 +179,18 @@ class ChatService implements IChatService {
       'lastMessageId': messageDoc.id,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    // Diğer kullanıcıya bildirim gönder
+    final chatDoc = await _firestore.collection('chats').doc(chatId).get();
+    final participantIds = List<String>.from(chatDoc.data()?['participantIds'] as List);
+    final otherUserId = participantIds.firstWhere((id) => id != userId);
+
+    // Gönderen kullanıcının bilgilerini al
+    final currentUserDoc = await _firestore.collection('users').doc(userId).get();
+    final currentUser = UserModel.fromFirestore(currentUserDoc);
+
+    // Bildirim gönder
+    await locator<NotificationManager>().sendMessage(otherUserId, content, currentUser.fullName);
 
     final messageSnapshot = await messageDoc.get();
     return MessageModel.fromFirestore(messageSnapshot);

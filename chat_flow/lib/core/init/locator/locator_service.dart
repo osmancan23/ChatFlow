@@ -4,14 +4,12 @@ import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
 import 'package:get_it/get_it.dart';
 
-final GetIt _locator = GetIt.instance;
-
-GetIt get locator => _locator;
+final locator = GetIt.instance;
 
 void setupLocator() {
   /// MARK: Constants
   ///
-  _locator
+  locator
     ..registerLazySingleton(AuthService.new)
     ..registerLazySingleton(NavigationService.new)
     ..registerLazySingleton(ChatService.new)

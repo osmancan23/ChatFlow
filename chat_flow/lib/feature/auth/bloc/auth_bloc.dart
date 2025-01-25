@@ -118,6 +118,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _updateFcmToken(String userId) async {
     await FirebaseMessaging.instance.getToken().then((value) async {
+      log('FCM Token: $value');
       await _authService.saveFcmToken(userId, value);
     });
   }

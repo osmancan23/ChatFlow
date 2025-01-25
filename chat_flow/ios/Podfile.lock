@@ -1167,6 +1167,9 @@ PODS:
   - Firebase/Firestore (11.6.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 11.6.0)
+  - Firebase/InAppMessaging (11.6.0):
+    - Firebase/CoreOnly
+    - FirebaseInAppMessaging (~> 11.6.0-beta)
   - Firebase/Messaging (11.6.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 11.6.0)
@@ -1180,6 +1183,10 @@ PODS:
   - firebase_core (3.10.1):
     - Firebase/CoreOnly (= 11.6.0)
     - Flutter
+  - firebase_in_app_messaging (0.8.1-1):
+    - Firebase/InAppMessaging (= 11.6.0)
+    - firebase_core
+    - Flutter
   - firebase_messaging (15.2.1):
     - Firebase/Messaging (= 11.6.0)
     - firebase_core
@@ -1188,6 +1195,8 @@ PODS:
     - Firebase/Storage (= 11.6.0)
     - firebase_core
     - Flutter
+  - FirebaseABTesting (11.6.0):
+    - FirebaseCore (~> 11.6.0)
   - FirebaseAppCheckInterop (11.7.0)
   - FirebaseAuth (11.6.0):
     - FirebaseAppCheckInterop (~> 11.0)
@@ -1226,6 +1235,13 @@ PODS:
     - "gRPC-C++ (~> 1.65.0)"
     - gRPC-Core (~> 1.65.0)
     - leveldb-library (~> 1.22)
+    - nanopb (~> 3.30910.0)
+  - FirebaseInAppMessaging (11.6.0-beta):
+    - FirebaseABTesting (~> 11.0)
+    - FirebaseCore (~> 11.6.0)
+    - FirebaseInstallations (~> 11.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
   - FirebaseInstallations (11.6.0):
     - FirebaseCore (~> 11.6.0)
@@ -1403,6 +1419,7 @@ DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
+  - firebase_in_app_messaging (from `.symlinks/plugins/firebase_in_app_messaging/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
@@ -1421,6 +1438,7 @@ SPEC REPOS:
     - abseil
     - BoringSSL-GRPC
     - Firebase
+    - FirebaseABTesting
     - FirebaseAppCheckInterop
     - FirebaseAuth
     - FirebaseAuthInterop
@@ -1429,6 +1447,7 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - FirebaseFirestore
     - FirebaseFirestoreInternal
+    - FirebaseInAppMessaging
     - FirebaseInstallations
     - FirebaseMessaging
     - FirebaseSharedSwift
@@ -1454,6 +1473,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
+  firebase_in_app_messaging:
+    :path: ".symlinks/plugins/firebase_in_app_messaging/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   firebase_storage:
@@ -1488,8 +1509,10 @@ SPEC CHECKSUMS:
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
   firebase_auth: 9927cecefe4daaf92b0fbe5d1d283e9329445177
   firebase_core: e2aa06dbd854d961f8ce46c2e20933bee1bf2d2b
+  firebase_in_app_messaging: f0351dfed657f528d1ba2892a055de755282df88
   firebase_messaging: 96cf6d67121b3f39746b2a4f29a26c0eee4af70e
   firebase_storage: 5f8f929f2b1a4f3d37d32ef6b8c474db40bfbe13
+  FirebaseABTesting: 663ece168d2d65a31f71603d71937e326020a887
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
   FirebaseAuth: 0304982cfe00df8d49bf533bc4becd3de36c7122
   FirebaseAuthInterop: a6973d72aa242ea88ffb6be9c9b06c65455071da
@@ -1498,6 +1521,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: d98ab91e2d80a56d7b246856a8885443b302c0c2
   FirebaseFirestore: d5dcc15724f291fe4b415322754bfa01616037fe
   FirebaseFirestoreInternal: db478fdaeb98fe8686ff49e600f3871c224a76ff
+  FirebaseInAppMessaging: c2875dcc8f15dd7aeed568d8389e2cb9cef42a6b
   FirebaseInstallations: efc0946fc756e4d22d8113f7c761948120322e8c
   FirebaseMessaging: e1aca1fcc23e8b9eddb0e33f375ff90944623021
   FirebaseSharedSwift: a45efd84d60ebbfdcdbaebc66948af3630459e62
