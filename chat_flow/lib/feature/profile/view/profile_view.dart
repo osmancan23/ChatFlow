@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/core/bloc/user/user_bloc.dart';
 import 'package:chat_flow/core/components/cacheNetworkImage/cache_network_image_widget.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
@@ -10,9 +11,7 @@ import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/core/service/user_service.dart';
-import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

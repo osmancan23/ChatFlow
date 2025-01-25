@@ -39,6 +39,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UserProfileUpdateError('Kullanıcı güncellenirken hata oluştu.'));
       }
     });
+
+    on<UpdateNotificationPreference>((event, emit) async {
+      emit(UpdatingNotificationPreference());
+      try {
+        await _userService.updateNotificationsEnabled(isEnabled: event.isEnabled);
+        emit(NotificationPreferenceUpdated());
+      } catch (e) {
+        emit(NotificationPreferenceUpdateError('Bildirim tercihi güncellenirken hata oluştu.'));
+      }
+    });
   }
   final IUserService _userService;
 }

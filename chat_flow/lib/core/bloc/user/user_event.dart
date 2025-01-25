@@ -10,3 +10,8 @@ final class UpdateUserProfile extends UserEvent {
   final UserModel user;
   final File? image;
 }
+
+final class UpdateNotificationPreference extends UserEvent {
+  UpdateNotificationPreference({required this.isEnabled});
+  final bool isEnabled;
+}

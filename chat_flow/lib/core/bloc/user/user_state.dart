@@ -25,3 +25,12 @@ final class UserProfileUpdateError extends UserState {
 }
 
 final class UserProfileUpdateLoading extends UserState {}
+
+final class UpdatingNotificationPreference extends UserState {}
+
+final class NotificationPreferenceUpdated extends UserState {}
+
+final class NotificationPreferenceUpdateError extends UserState {
+  NotificationPreferenceUpdateError(this.message);
+  final String message;
+}

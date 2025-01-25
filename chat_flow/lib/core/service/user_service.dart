@@ -9,15 +9,12 @@ abstract class IUserService {
 
   Future<void> updateUserProfile(UserModel user);
 
-  Future<UserModel?> getChatUserProfile(String chatId);
 
-  
+  Future<void> updateNotificationsEnabled({required bool isEnabled});
 }
 
 class UserService extends IUserService {
-  UserService({required FirebaseFirestore firestore}) : _firestore = firestore;
-
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Future<UserModel?> getCurrentUserProfile() async {
@@ -38,22 +35,6 @@ class UserService extends IUserService {
     }
   }
 
-  @override
-  Future<UserModel?> getChatUserProfile(String userId) async {
-    try {
-      final docSnapshot = await _firestore.collection('users').doc(userId).get();
-
-      if (docSnapshot.exists) {
-        return UserModel.fromFirestore(docSnapshot);
-      } else {
-        log('Kullanıcı bulunamadı.');
-        return null;
-      }
-    } catch (e) {
-      log('Hata oluştu: $e');
-      return null;
-    }
-  }
 
   @override
   Future<void> updateUserProfile(UserModel user) async {
@@ -62,6 +43,19 @@ class UserService extends IUserService {
       log('Kullanıcı güncellendi.');
     } catch (e) {
       log('Hata oluştu: $e');
+    }
+  }
+
+  @override
+  Future<void> updateNotificationsEnabled({required bool isEnabled}) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+
+      await _firestore.collection('users').doc(userId).update({
+        'notificationsEnabled': isEnabled,
+      });
+    } catch (e) {
+      print('Error updating notificationsEnabled: $e');
     }
   }
 }

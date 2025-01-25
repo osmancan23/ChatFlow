@@ -9,7 +9,7 @@ mixin _ProfileViewMixin on State<_ProfileBodyWidget> {
   late StreamSubscription<UserState> _userSubscription;
   @override
   void initState() {
-    _userBloc = UserBloc(UserService(firestore: FirebaseFirestore.instance));
+    _userBloc = UserBloc(locator<UserService>());
     _userBloc.add(FetchCurrentUserProfile());
     super.initState();
 
