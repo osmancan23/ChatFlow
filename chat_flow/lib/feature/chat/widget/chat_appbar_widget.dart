@@ -56,7 +56,7 @@ class _ChatAppbarWidgetState extends State<_ChatAppbarWidget> {
                           data?.lastSeen?.formatDateDifference == 'Şimdi'
                               ? 'Çevrimiçi'
                               : 'Son görülme: ${data?.lastSeen?.formatDateDifference}',
-                          textStyle: context.general.textTheme.bodySmall?.copyWith(),
+                          textStyle: context.theme.textTheme.bodySmall?.copyWith(),
                         ),
                       ),
                     ],

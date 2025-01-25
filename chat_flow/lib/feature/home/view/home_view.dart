@@ -8,10 +8,10 @@ import 'package:chat_flow/core/models/user_model.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
 import 'package:chat_flow/feature/chat/view/chat_view.dart';
 import 'package:chat_flow/feature/users/view/users_view.dart';
+import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:chat_flow/utils/extension/string_extension.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart';
 part '../widget/chat_list_tile_widget.dart';
 
 class HomeView extends StatefulWidget {
@@ -54,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
               : Center(
                   child: CustomText(
                     'Sohbet Bulunamadı',
-                    textStyle: context.general.textTheme.bodyLarge,
+                    textStyle: context.theme.textTheme.bodyLarge,
                   ),
                 );
         },

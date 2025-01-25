@@ -12,6 +12,19 @@ mixin _LoginViewMixin on State<LoginView> {
 
     super.dispose();
   }
+
+  void _listenBloc(AuthState state, BuildContext context) {
+    if (state is AuthSuccess) {
+      locator<NavigationService>().navigateToPageClear(
+        context: context,
+        page: const MainView(),
+      );
+    } else if (state is AuthFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
+      );
+    }
+  }
 }
 
 class _LoginViewStrings {

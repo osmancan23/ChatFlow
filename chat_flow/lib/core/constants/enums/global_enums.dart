@@ -1,5 +1,5 @@
 enum SizeEnums {
-  designSize(428, 926);
+  designSize(375, 812);
 
   const SizeEnums(this.width, this.height);
 

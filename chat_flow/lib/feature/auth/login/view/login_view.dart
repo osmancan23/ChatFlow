@@ -9,6 +9,7 @@ import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/register/view/register_view.dart';
 import 'package:chat_flow/feature/main/view/main_view.dart';
+import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:chat_flow/utils/extension/num_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,18 +28,7 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthSuccess) {
-          locator<NavigationService>().navigateToPageClear(
-            context: context,
-            page: const MainView(),
-          );
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
+      listener: (context, state) => _listenBloc(state, context),
       child: Scaffold(
         appBar: AppBar(
           title: const CustomText(_LoginViewStrings.title),
@@ -79,14 +69,7 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
                       onTap: state is AuthLoading
                           ? () {}
                           : () {
-                              if (_formKey.currentState!.validate()) {
-                                context.read<AuthBloc>().add(
-                                      AuthLoginRequested(
-                                        email: _emailController.text.trim(),
-                                        password: _passwordController.text.trim(),
-                                      ),
-                                    );
-                              }
+                              _login(context);
                             },
                       text: state is AuthLoading ? 'Giriş Yapılıyor...' : _LoginViewStrings.loginButtonText,
                     );
@@ -99,14 +82,13 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
                     const CustomText(_LoginViewStrings.noAccountText),
                     TextButton(
                       onPressed: () {
-                        locator<NavigationService>().navigateToPage(
-                          context: context,
-                          page: const RegisterView(),
-                        );
+                        _goToRegisterView(context);
                       },
-                      child: const Text(
+                      child: CustomText(
                         _LoginViewStrings.registerButtonText,
-                        style: TextStyle(color: Colors.deepPurple),
+                        textStyle: context.theme.textTheme.bodySmall?.copyWith(
+                          color: context.theme.primaryColor,
+                        ),
                       ),
                     ),
                   ],
@@ -117,5 +99,23 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
         ),
       ),
     );
+  }
+
+  void _goToRegisterView(BuildContext context) {
+    locator<NavigationService>().navigateToPage(
+      context: context,
+      page: const RegisterView(),
+    );
+  }
+
+  void _login(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthBloc>().add(
+            AuthLoginRequested(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim(),
+            ),
+          );
+    }
   }
 }

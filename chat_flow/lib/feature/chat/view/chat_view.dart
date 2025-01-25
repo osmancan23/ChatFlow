@@ -6,9 +6,9 @@ import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/models/message_model.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
+import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:chat_flow/utils/extension/string_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart';
 part '../mixin/chat_view_mixin.dart';
 part '../widget/chat_appbar_widget.dart';
 part '../widget/chat_message_box_widget.dart';
@@ -58,7 +58,7 @@ class _ChatViewState extends State<ChatView> with _ChatViewMixin {
                                           padding: PaddingConstants.paddingHorizontalMedium,
                                           child: CustomText(
                                             (data ?? false) ? 'Okundu' : 'Gönderildi',
-                                            textStyle: context.general.textTheme.bodySmall,
+                                            textStyle: context.theme.textTheme.bodySmall,
                                           ),
                                         );
                                       },

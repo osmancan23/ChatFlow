@@ -1,8 +1,8 @@
 // ignore: must_be_immutable
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kartal/kartal.dart';
 
 @immutable
 // ignore: must_be_immutable
@@ -37,25 +37,25 @@ final class ButtonWidget extends StatelessWidget {
       height: height.h,
       width: width.w,
       decoration: BoxDecoration(
-        color: buttonColor ?? context.general.colorScheme.onPrimary,
-        borderRadius: BorderRadius.circular(context.sized.dynamicWidth(radius!)),
+        color: buttonColor ?? context.theme.colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(36),
       ),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(buttonColor ?? context.general.colorScheme.primary),
+          backgroundColor: WidgetStateProperty.all<Color>(buttonColor ?? context.theme.colorScheme.primary),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius!.r),
             ),
           ),
-          overlayColor: WidgetStateProperty.all<Color>(context.general.colorScheme.scrim.withOpacity(0.1)),
+          overlayColor: WidgetStateProperty.all<Color>(context.theme.colorScheme.scrim.withOpacity(0.1)),
           elevation: WidgetStateProperty.all<double>(0.5),
         ),
         onPressed: onTap,
         child: Center(
           child: AutoSizeText(
             text!,
-            style: context.general.textTheme.bodyMedium
+            style: context.theme.textTheme.bodyMedium
                 ?.copyWith(color: textColor, fontSize: fontSize?.sp, fontWeight: fontWeight),
           ),
         ),
