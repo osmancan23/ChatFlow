@@ -7,12 +7,39 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
 ## 📱 Screenshots
 
 <div align="center">
-  <img src="screenshots/login.png" alt="Login Screen" width="200"/>
-  <img src="screenshots/register.png" alt="Register Screen" width="200"/>
-  <img src="screenshots/home.png" alt="Home Screen" width="200"/>
-  <img src="screenshots/chat.png" alt="Chat Screen" width="200"/>
-  <img src="screenshots/users.png" alt="Users Screen" width="200"/>
-  <img src="screenshots/profile.png" alt="Profile Screen" width="200"/>
+ <table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/login.png" alt="Login View" width="300">
+      <br><em>Login View</em>
+    </td>
+    <td align="center">
+      <img src="screenshots/register.png" alt="Register View" width="300">
+      <br><em>Register View</em>
+    </td>
+     <td align="center">
+      <img src="screenshots/home.png" alt="Home View" width="300">
+      <br><em>Home View</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/chat.png" alt="Chat View" width="300">
+      <br><em>Chat View</em>
+    </td>
+    <td align="center">
+      <img src="screenshots/users.png" alt="Users View" width="300">
+      <br><em>Users View</em>
+    </td>
+     <td align="center">
+      <img src="screenshots/profile.png" alt="Profile View" width="300">
+      <br><em>Profile View</em>
+    </td>
+    <tr>
+   
+  
+</table>
+
 </div>
 
 ## ✨ Features
