@@ -19,7 +19,9 @@ abstract class IAuthService {
 
   Future<void> updateTokenFromStorage();
 
+  Future<void> saveFcmToken(String userId, String? token);
 
+  Future<String?> getUserFcmToken(String userId);
 }
 
 class AuthService extends IAuthService {
@@ -88,5 +90,28 @@ class AuthService extends IAuthService {
       });
     }
     await _firebaseAuth.signOut();
+  }
+
+  @override
+  Future<void> saveFcmToken(String userId, String? token) async {
+    if (token == null) return;
+
+    // Kullanıcının Firestore'daki verisini güncelle
+    await _firebaseFirestore.collection('users').doc(userId).set(
+      {
+        'fcmToken': token,
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  @override
+  Future<String?> getUserFcmToken(String userId) async {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      return userDoc['fcmToken'] as String?;
+    }
+    return null;
   }
 }

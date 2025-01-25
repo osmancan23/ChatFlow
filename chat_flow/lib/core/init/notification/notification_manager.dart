@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:chat_flow/core/init/locator/locator_service.dart';
+import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 
 @immutable
 final class NotificationManager {
@@ -94,13 +97,60 @@ final class NotificationManager {
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
-}
+
+  Future<void> _sendNotification(String targetToken, String senderName, String message) async {
+    const serverKey =
+        'AAAACtQa_tc:APA91bE5rGB-AU2mUfNDs6bbA_EjqO0kmqmaLe9JOqVFlBr36vB319ltEfK6c_jkDThZqqwGlhhiuY01WiOqC41cSj38KO5TdAHjljKfzd9q1ZSfrlMZyejv1dfUv-oFBj5WuCblkgDe'; // Firebase projenizdeki sunucu anahtarı
+    const fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+    try {
+      final response = await http.post(
+        Uri.parse(fcmUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$serverKey',
+        },
+        body: jsonEncode({
+          'to': targetToken,
+          'notification': {
+            'title': '$senderName size bir mesaj gönderdi!',
+            'body': message,
+            'sound': 'default',
+          },
+          'data': {
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'message': message,
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Bildirim gönderildi: ${response.body}');
+      } else {
+        print('Bildirim gönderimi hatası: ${response.body}');
+      }
+    } catch (e) {
+      print('Hata: $e');
+    }
+  }
 
 // Background
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    // If you're going to use other Firebase services in the background, such as Firestore,
+    // make sure you call `initializeApp` before using other Firebase services.
+    await Firebase.initializeApp();
 
-  log('Handling a background message: ${message.messageId}');
+    log('Handling a background message: ${message.messageId}');
+  }
+
+  Future<void> sendMessage(String receiverId, String message, String name) async {
+    final token = await locator<AuthService>().getUserFcmToken(receiverId);
+
+    if (token != null) {
+      // FCM bildirimi gönder
+      await _sendNotification(token, name, message);
+    } else {
+      print('Hedef kullanıcının FCM tokenı bulunamadı.');
+    }
+  }
 }

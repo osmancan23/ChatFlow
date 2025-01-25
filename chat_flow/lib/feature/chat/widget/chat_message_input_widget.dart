@@ -60,10 +60,12 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
               ),
             ),
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 if (widget._messageController.text.isNotEmpty) {
                   try {
-                    _chatService.sendMessage(widget.chatId, widget._messageController.text);
+                    await _chatService.sendMessage(widget.chatId, widget._messageController.text);
+                    await locator<NotificationManager>()
+                        .sendMessage('xMOquntA5la00cGoGQaiaOprqWs1', widget._messageController.text, 'Mahsun');
                   } catch (e) {
                     print(e);
                   }

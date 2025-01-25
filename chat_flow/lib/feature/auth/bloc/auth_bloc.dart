@@ -34,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _saveToken(user);
 
         emit(const AuthSuccess());
-        await _updateFcmToken();
+        await _updateFcmToken(user.uid);
       } else {
         emit(const AuthFailure('Kullanıcı bilgileri hatalı'));
       }
@@ -58,7 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         await _saveToken(user);
         emit(const AuthSuccess());
-        await _updateFcmToken();
+        await _updateFcmToken(user.uid);
       } else {
         emit(const AuthFailure('Kullanıcı kaydı sırasında bir hata oluştu'));
       }
@@ -98,7 +98,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _saveToken(user);
 
         emit(const AuthSuccess());
-        await _updateFcmToken();
+        await _updateFcmToken(user.uid);
       } catch (e) {
         emit(const AuthSuccess());
       }
@@ -116,9 +116,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _authService.updateToken(null);
   }
 
-  Future<void> _updateFcmToken() async {
+  Future<void> _updateFcmToken(String userId) async {
     await FirebaseMessaging.instance.getToken().then((value) async {
-      log('FCMTOKEN: $value');
+      await _authService.saveFcmToken(userId, value);
     });
   }
 }
