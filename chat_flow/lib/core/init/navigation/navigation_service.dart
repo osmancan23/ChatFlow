@@ -10,6 +10,7 @@ final class NavigationService {
     if (removeStack) {
       await Navigator.pushReplacement(
         context,
+        // ignore: inference_failure_on_instance_creation
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -25,6 +26,7 @@ final class NavigationService {
     } else {
       await Navigator.push(
         context,
+        // ignore: inference_failure_on_instance_creation
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -50,6 +52,7 @@ final class NavigationService {
   }) async {
     await Navigator.pushAndRemoveUntil(
       context,
+      // ignore: inference_failure_on_instance_creation
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {

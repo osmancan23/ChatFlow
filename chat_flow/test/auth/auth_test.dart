@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:chat_flow/core/service/auth/auth_service.dart';
-import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
+import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -10,7 +10,7 @@ import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/core/service/user_service.dart';
-import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
+import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

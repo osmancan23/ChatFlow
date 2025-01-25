@@ -8,30 +8,36 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
 
 <div align="center">
   <img src="screenshots/login.png" alt="Login Screen" width="200"/>
-  <img src="screenshots/chat_list.png" alt="Chat List" width="200"/>
-  <img src="screenshots/chat_detail.png" alt="Chat Detail" width="200"/>
+  <img src="screenshots/register.png" alt="Register Screen" width="200"/>
+  <img src="screenshots/home.png" alt="Home Screen" width="200"/>
+  <img src="screenshots/chat.png" alt="Chat Screen" width="200"/>
+  <img src="screenshots/users.png" alt="Users Screen" width="200"/>
   <img src="screenshots/profile.png" alt="Profile Screen" width="200"/>
 </div>
 
 ## ✨ Features
 
 ### 🔐 Authentication
+
 - Secure session management with JWT
 - User registration and login
 - Secure password storage
 
 ### 💬 Real-Time Chat
+
 - Instant messaging with Firebase Realtime Database
 - Typing indicators
 - Message read/unread status
 - Last seen feature
 
 ### 🔔 Notifications
+
 - Firebase Cloud Messaging (FCM) integration
 - Customizable notification settings
 - In-app notification management
 
 ### 👤 User Profile
+
 - Profile creation and editing
 - Profile picture upload with Firebase Storage
 - User settings management
@@ -47,23 +53,27 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
 ## 🔧 Installation
 
 1. Prerequisites:
+
    - Flutter SDK (latest version)
    - Dart SDK (latest version)
    - Android Studio / VS Code
    - Firebase account
 
 2. Clone the project:
+
    ```bash
    git clone [repo-url]
    cd chat_flow
    ```
 
 3. Install dependencies:
+
    ```bash
    flutter pub get
    ```
 
 4. Firebase configuration:
+
    - Create a new project in Firebase Console
    - Add google-services.json and GoogleService-Info.plist files to respective directories
    - Complete Firebase setup steps

@@ -6,7 +6,7 @@ import 'package:chat_flow/core/constants/enums/lottie_enums.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
-import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
+import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/register/view/register_view.dart';
 import 'package:chat_flow/feature/main/view/main_view.dart';
 import 'package:chat_flow/utils/extension/num_extensions.dart';

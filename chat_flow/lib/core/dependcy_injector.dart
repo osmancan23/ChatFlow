@@ -2,7 +2,7 @@ import 'package:chat_flow/core/bloc/chat/chat_bloc.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:chat_flow/core/service/chat_service.dart';
-import 'package:chat_flow/feature/auth/bloc/auth_bloc.dart';
+import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 final class DependcyInjector {
