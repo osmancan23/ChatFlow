@@ -5,8 +5,8 @@ class UserModel {
     required this.id,
     required this.email,
     required this.fullName,
-    required this.createdAt,
-    required this.updatedAt,
+     this.createdAt,
+     this.updatedAt,
     this.profilePhoto,
     this.bio,
     this.isOnline = false,
@@ -44,8 +44,8 @@ class UserModel {
   bool isOnline;
   String? lastSeen;
   List<String> chatIds;
-  final String createdAt;
-  String updatedAt;
+  final String? createdAt;
+  String? updatedAt;
   bool notificationsEnabled;
   String? platform; // 'ios' veya 'android'
 
