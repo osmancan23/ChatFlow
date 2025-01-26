@@ -101,21 +101,5 @@ class _LoginViewState extends State<LoginView> with _LoginViewMixin {
     );
   }
 
-  void _goToRegisterView(BuildContext context) {
-    locator<NavigationService>().navigateToPage(
-      context: context,
-      page: const RegisterView(),
-    );
-  }
-
-  void _login(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            AuthLoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text.trim(),
-            ),
-          );
-    }
-  }
+  
 }

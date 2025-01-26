@@ -8,6 +8,7 @@ import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/init/validator/app_validator.dart';
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/main/view/main_view.dart';
+import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:chat_flow/utils/extension/num_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +38,7 @@ class _RegisterViewState extends State<RegisterView> with _RegisterViewMixin {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(_RegisterViewStrings.title),
+          title: const CustomText(_RegisterViewStrings.title),
         ),
         body: Padding(
           padding: PaddingConstants.paddingAllSmall,
@@ -108,10 +109,10 @@ class _RegisterViewState extends State<RegisterView> with _RegisterViewMixin {
                         onPressed: () {
                           locator<NavigationService>().navigateToBack(context);
                         },
-                        child: const Text(
+                        child: CustomText(
                           _RegisterViewStrings.loginButtonText,
-                          style: TextStyle(
-                            color: Colors.deepPurple,
+                          textStyle: context.theme.textTheme.bodySmall?.copyWith(
+                            color: context.theme.primaryColor,
                           ),
                         ),
                       ),

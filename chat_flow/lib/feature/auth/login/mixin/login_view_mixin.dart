@@ -25,6 +25,24 @@ mixin _LoginViewMixin on State<LoginView> {
       );
     }
   }
+
+  void _goToRegisterView(BuildContext context) {
+    locator<NavigationService>().navigateToPage(
+      context: context,
+      page: const RegisterView(),
+    );
+  }
+
+  void _login(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthBloc>().add(
+            AuthLoginRequested(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim(),
+            ),
+          );
+    }
+  }
 }
 
 class _LoginViewStrings {
