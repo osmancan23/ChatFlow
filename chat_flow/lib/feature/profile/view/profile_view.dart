@@ -1,25 +1,16 @@
-import 'dart:async';
-import 'dart:io';
 
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
-import 'package:chat_flow/core/bloc/user/user_bloc.dart';
 import 'package:chat_flow/core/components/button/button.dart';
-import 'package:chat_flow/core/components/cacheNetworkImage/cache_network_image_widget.dart';
 import 'package:chat_flow/core/components/text/custom_text.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
-import 'package:chat_flow/core/init/locator/locator_service.dart';
 
-import 'package:chat_flow/core/service/user/user_service.dart';
 import 'package:chat_flow/feature/profile/viewmodel/profile_view_model.dart';
 import 'package:chat_flow/utils/extension/num_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-part '../widget/profile_avatar_widget.dart';
-part '../widget/notification_switch_widget.dart';
 
 /// Profil ekranı
 /// Kullanıcının profil bilgilerini görüntülemesini ve düzenlemesini sağlayan ekran

@@ -14,8 +14,6 @@ import 'package:image_picker/image_picker.dart';
 /// Profil ekranı için ViewModel sınıfı
 /// Bu sınıf, profil işlemleri için gerekli olan business logic'i içerir
 class ProfileViewModel extends BaseViewModel {
-
-
   final UserService _userService = locator<UserService>();
   final FirebaseStorageService _storageService = locator<FirebaseStorageService>();
   final nameController = TextEditingController();
