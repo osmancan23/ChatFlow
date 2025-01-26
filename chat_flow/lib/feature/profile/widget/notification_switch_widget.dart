@@ -1,9 +1,7 @@
 part of '../view/profile_view.dart';
 
 class _NotificationSwitchWidget extends StatefulWidget {
-  const _NotificationSwitchWidget({
-    super.key,
-  });
+  const _NotificationSwitchWidget();
 
   @override
   State<_NotificationSwitchWidget> createState() => _NotificationSwitchWidgetState();

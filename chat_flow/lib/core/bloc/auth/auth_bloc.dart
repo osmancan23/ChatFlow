@@ -63,7 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthFailure('Kullanıcı kaydı sırasında bir hata oluştu'));
       }
     } on FirebaseAuthException catch (e) {
-      emit(AuthFailure(e.message ?? 'Bir hata oluştu'));
+      emit(AuthFailure(AuthExceptionHandler.findExceptionType(e)));
     } catch (e) {
       emit(const AuthFailure('Kullanıcı kaydı sırasında bir hata oluştu'));
     }

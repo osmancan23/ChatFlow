@@ -17,7 +17,8 @@ enum AuthResultStatus {
   signInCanceled,
   requiresRecentLogin,
   accountExist,
-  mustRegister
+  mustRegister,
+  invalidCredential
 }
 
 class AuthExceptionHandler {
@@ -55,6 +56,8 @@ class AuthExceptionHandler {
         status = AuthResultStatus.requiresRecentLogin;
       case 'account-exists-with-different-credential':
         status = AuthResultStatus.accountExist;
+      case 'invalid-credential':
+        status = AuthResultStatus.invalidCredential;
       default:
         status = AuthResultStatus.undefined;
     }
@@ -92,6 +95,8 @@ class AuthExceptionHandler {
         errorMessage = 'Son Giriş Gerekir';
       case AuthResultStatus.accountExist:
         errorMessage = 'Hesap Zaten Bulunmakta';
+      case AuthResultStatus.invalidCredential:
+        errorMessage = 'Girdiğiniz kimlik bilgileri geçersiz veya süresi dolmuş';
       default:
         errorMessage = 'Bir sorun oluştu';
     }
