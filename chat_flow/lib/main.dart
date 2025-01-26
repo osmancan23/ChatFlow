@@ -1,15 +1,12 @@
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
-import 'package:chat_flow/core/init/locator/locator_service.dart';
+import 'package:chat_flow/core/init/app/app_init.dart';
 import 'package:chat_flow/feature/splash/view/splash_view.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  setupLocator();
+  await ApplicationInit.instance?.appInit();
   runApp(const MyApp());
 }
 
