@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:chat_flow/core/base/view_model/base_view_model.dart';
+import 'package:chat_flow/core/base/viewModel/base_view_model.dart';
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:chat_flow/feature/main/view/main_view.dart';

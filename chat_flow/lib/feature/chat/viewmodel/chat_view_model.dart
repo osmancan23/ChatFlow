@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chat_flow/core/base/view_model/base_view_model.dart';
+import 'package:chat_flow/core/base/viewModel/base_view_model.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/models/message_model.dart';
 import 'package:chat_flow/core/models/user_model.dart';
