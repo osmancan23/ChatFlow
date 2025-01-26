@@ -34,9 +34,8 @@ class _ChatListTileWidget extends StatelessWidget {
           color: Colors.transparent,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundImage: chat.getOtherUser()?.profilePhoto != null
-                  ? NetworkImage(chat.getOtherUser()!.profilePhoto!)
-                  : null,
+              backgroundImage:
+                  chat.getOtherUser()?.profilePhoto != null ? NetworkImage(chat.getOtherUser()!.profilePhoto!) : null,
               child: chat.getOtherUser()?.profilePhoto == null ? Icon(Icons.person, size: 24.r) : null,
             ),
             title: CustomText(
@@ -52,7 +51,6 @@ class _ChatListTileWidget extends StatelessWidget {
                     maxLines: 1,
                   ),
                 ),
-                
               ],
             ),
             trailing: Column(
@@ -60,7 +58,7 @@ class _ChatListTileWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CustomText(
-                  chat.updatedAt?.toIso8601String().formatDateDifference ?? '',
+                  chat.updatedAt.formatDateDifference,
                   textStyle: context.theme.textTheme.bodySmall,
                 ),
                 const SizedBox(height: 4),

@@ -1,20 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'user_model.g.dart';
+
+@JsonSerializable()
 class UserModel {
   UserModel({
     required this.id,
     required this.email,
     required this.fullName,
-     this.createdAt,
-     this.updatedAt,
+    required this.platform,
+    required this.isOnline,
+    required this.createdAt,
+    required this.updatedAt,
     this.profilePhoto,
-    this.bio,
-    this.isOnline = false,
-    this.lastSeen,
-    this.chatIds = const [],
+    this.fcmToken,
     this.notificationsEnabled = true,
-    this.platform,
+    this.lastSeen,
   });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -22,38 +27,35 @@ class UserModel {
       email: map['email'] as String,
       fullName: map['fullName'] as String,
       profilePhoto: map['profilePhoto'] as String?,
-      bio: map['bio'] as String?,
-      isOnline: map['isOnline'] as bool,
-      lastSeen: map['lastSeen'] is Timestamp 
-          ? (map['lastSeen'] as Timestamp).toDate().toIso8601String()
-          : map['lastSeen'] as String?,
-      chatIds: (map['chatIds'] as List?)?.map((e) => e as String).toList() ?? [],
-      createdAt: map['createdAt'] is Timestamp 
-          ? (map['createdAt'] as Timestamp).toDate().toIso8601String()
-          : map['createdAt'] as String?,
-      updatedAt: map['updatedAt'] is Timestamp 
-          ? (map['updatedAt'] as Timestamp).toDate().toIso8601String()
-          : map['updatedAt'] as String?,
+      platform: map['platform'] as String? ?? 'unknown',
+      isOnline: map['isOnline'] as bool? ?? false,
+      fcmToken: map['fcmToken'] as String?,
+      createdAt: map['createdAt'] as String? ?? DateTime.now().toIso8601String(),
+      updatedAt: map['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
       notificationsEnabled: map['notificationsEnabled'] as bool? ?? true,
-      platform: map['platform'] as String?,
+      lastSeen: map['lastSeen'] as String?,
     );
   }
 
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    return UserModel.fromMap(doc.data()! as Map<String, dynamic>);
+    final data = doc.data()! as Map<String, dynamic>;
+    return UserModel.fromMap({
+      'id': doc.id,
+      ...data,
+    });
   }
   final String id;
   final String email;
   final String fullName;
   String? profilePhoto;
-  String? bio;
-  bool isOnline;
+  final String platform;
+  final bool isOnline;
+  final String? fcmToken;
+  final String createdAt;
+  final String updatedAt;
+  final bool notificationsEnabled;
   String? lastSeen;
-  List<String> chatIds;
-  final String? createdAt;
-  String? updatedAt;
-  bool notificationsEnabled;
-  String? platform; // 'ios' veya 'android'
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   Map<String, dynamic> toMap() {
     return {
@@ -61,14 +63,13 @@ class UserModel {
       'email': email,
       'fullName': fullName,
       'profilePhoto': profilePhoto,
-      'bio': bio,
+      'platform': platform,
       'isOnline': isOnline,
-      'lastSeen': lastSeen,
-      'chatIds': chatIds,
+      'fcmToken': fcmToken,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'notificationsEnabled': notificationsEnabled,
-      'platform': platform,
+      'lastSeen': lastSeen,
     };
   }
 
@@ -77,28 +78,26 @@ class UserModel {
     String? email,
     String? fullName,
     String? profilePhoto,
-    String? bio,
+    String? platform,
     bool? isOnline,
-    String? lastSeen,
-    List<String>? chatIds,
+    String? fcmToken,
     String? createdAt,
     String? updatedAt,
     bool? notificationsEnabled,
-    String? platform,
+    String? lastSeen,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
       profilePhoto: profilePhoto ?? this.profilePhoto,
-      bio: bio ?? this.bio,
+      platform: platform ?? this.platform,
       isOnline: isOnline ?? this.isOnline,
-      lastSeen: lastSeen ?? this.lastSeen,
-      chatIds: chatIds ?? this.chatIds,
+      fcmToken: fcmToken ?? this.fcmToken,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
-      platform: platform ?? this.platform,
+      lastSeen: lastSeen ?? this.lastSeen,
     );
   }
 }

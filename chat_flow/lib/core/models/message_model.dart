@@ -6,56 +6,58 @@ part 'message_model.g.dart';
 
 @JsonSerializable()
 class MessageModel {
-  const MessageModel({
+  final String id;
+  final String senderId;
+  final String content;
+  final String timestamp;
+  final bool isRead;
+  final String? imageUrl;
+
+  MessageModel({
     required this.id,
     required this.senderId,
     required this.content,
     required this.timestamp,
-    this.isRead = false,
+    required this.isRead,
     this.imageUrl,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) => _$MessageModelFromJson(json);
 
   factory MessageModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data()! as Map<String, dynamic>;
-    final timestamp = data['timestamp'] as Timestamp?;
-    
+    final data = doc.data() as Map<String, dynamic>;
     return MessageModel(
       id: doc.id,
       senderId: data['senderId'] as String,
       content: data['content'] as String,
-      timestamp: timestamp?.toDate() ?? DateTime.now(),
+      timestamp: data['timestamp'] is Timestamp
+          ? (data['timestamp'] as Timestamp).toDate().toIso8601String()
+          : data['timestamp'] as String? ?? DateTime.now().toIso8601String(),
       isRead: data['isRead'] as bool? ?? false,
       imageUrl: data['imageUrl'] as String?,
     );
   }
-  final String id;
-  final String senderId;
-  final String content;
-  final DateTime timestamp;
-  final bool isRead;
-  final String? imageUrl;
-
-  // write get method for isMe current user id == senderId
 
   bool get isMe => senderId == FirebaseAuth.instance.currentUser?.uid;
 
   Map<String, dynamic> toJson() => _$MessageModelToJson(this);
 
-  Map<String, dynamic> toFirestore() => {
-        'senderId': senderId,
-        'content': content,
-        'timestamp': Timestamp.fromDate(timestamp),
-        'isRead': isRead,
-        'imageUrl': imageUrl,
-      };
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'senderId': senderId,
+      'content': content,
+      'timestamp': timestamp,
+      'isRead': isRead,
+      'imageUrl': imageUrl,
+    };
+  }
 
   MessageModel copyWith({
     String? id,
     String? senderId,
     String? content,
-    DateTime? timestamp,
+    String? timestamp,
     bool? isRead,
     String? imageUrl,
   }) {

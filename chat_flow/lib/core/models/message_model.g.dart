@@ -10,8 +10,8 @@ MessageModel _$MessageModelFromJson(Map<String, dynamic> json) => MessageModel(
       id: json['id'] as String,
       senderId: json['senderId'] as String,
       content: json['content'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      isRead: json['isRead'] as bool? ?? false,
+      timestamp: json['timestamp'] as String,
+      isRead: json['isRead'] as bool,
       imageUrl: json['imageUrl'] as String?,
     );
 
@@ -20,7 +20,7 @@ Map<String, dynamic> _$MessageModelToJson(MessageModel instance) =>
       'id': instance.id,
       'senderId': instance.senderId,
       'content': instance.content,
-      'timestamp': instance.timestamp.toIso8601String(),
+      'timestamp': instance.timestamp,
       'isRead': instance.isRead,
       'imageUrl': instance.imageUrl,
     };

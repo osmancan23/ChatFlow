@@ -1,57 +1,75 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'notification_model.g.dart';
+
+@JsonSerializable()
 class NotificationModel {
+  final String id;
+  final String title;
+  final String body;
+  final String chatId;
+  final DateTime timestamp;
+  final bool isRead;
+  final String userId;
+
   NotificationModel({
     required this.id,
-    required this.userId,
     required this.title,
     required this.body,
-    required this.type,
     required this.chatId,
-    required this.senderId,
     required this.timestamp,
     required this.isRead,
-    required this.platform,
+    required this.userId,
   });
 
+  factory NotificationModel.fromJson(Map<String, dynamic> json) => _$NotificationModelFromJson(json);
+  Map<String, dynamic> toJson() => _$NotificationModelToJson(this);
+
   factory NotificationModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data()! as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>;
     return NotificationModel(
       id: doc.id,
-      userId: data['userId'] as String,
       title: data['title'] as String,
       body: data['body'] as String,
-      type: data['type'] as String,
       chatId: data['chatId'] as String,
-      senderId: data['senderId'] as String,
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      timestamp: data['timestamp'] is Timestamp
+          ? (data['timestamp'] as Timestamp).toDate()
+          : DateTime.parse(data['timestamp'] as String),
       isRead: data['isRead'] as bool? ?? false,
-      platform: data['platform'] as String,
+      userId: data['userId'] as String,
     );
   }
 
-  final String id;
-  final String userId;
-  final String title;
-  final String body;
-  final String type;
-  final String chatId;
-  final String senderId;
-  final DateTime timestamp;
-  final bool isRead;
-  final String platform;
-
   Map<String, dynamic> toMap() {
     return {
-      'userId': userId,
+      'id': id,
       'title': title,
       'body': body,
-      'type': type,
       'chatId': chatId,
-      'senderId': senderId,
-      'timestamp': Timestamp.fromDate(timestamp),
+      'timestamp': timestamp.toIso8601String(),
       'isRead': isRead,
-      'platform': platform,
+      'userId': userId,
     };
+  }
+
+  NotificationModel copyWith({
+    String? id,
+    String? title,
+    String? body,
+    String? chatId,
+    DateTime? timestamp,
+    bool? isRead,
+    String? userId,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      chatId: chatId ?? this.chatId,
+      timestamp: timestamp ?? this.timestamp,
+      isRead: isRead ?? this.isRead,
+      userId: userId ?? this.userId,
+    );
   }
 } 

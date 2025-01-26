@@ -9,71 +9,75 @@ part 'chat_model.g.dart';
 
 @JsonSerializable()
 class ChatModel {
-  const ChatModel({
+  final String id;
+  final List<String> participantIds;
+  final List<UserModel> participants;
+  final MessageModel? lastMessage;
+  final String createdAt;
+  final String updatedAt;
+  final Map<String, bool> typing;
+  final Map<String, String> lastSeen;
+
+  ChatModel({
     required this.id,
+    required this.participantIds,
     required this.participants,
+    this.lastMessage,
     required this.createdAt,
     required this.updatedAt,
-    this.lastMessage,
-    this.typing = const {},
-    this.lastSeen = const {},
+    required this.typing,
+    required this.lastSeen,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => _$ChatModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ChatModelToJson(this);
 
   factory ChatModel.fromFirestore(
     DocumentSnapshot doc, {
-    required List<UserModel> participants,
+    List<UserModel> participants = const [],
     MessageModel? lastMessage,
   }) {
-    final data = doc.data()! as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>;
     return ChatModel(
       id: doc.id,
+      participantIds: List<String>.from(data['participantIds'] as List),
       participants: participants,
       lastMessage: lastMessage,
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      createdAt: data['createdAt'] is Timestamp
+          ? (data['createdAt'] as Timestamp).toDate().toIso8601String()
+          : data['createdAt'] as String? ?? DateTime.now().toIso8601String(),
+      updatedAt: data['updatedAt'] is Timestamp
+          ? (data['updatedAt'] as Timestamp).toDate().toIso8601String()
+          : data['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
       typing: Map<String, bool>.from(data['typing'] as Map? ?? {}),
-      lastSeen: (data['lastSeen'] as Map?)?.map(
-            (key, value) => MapEntry(
-              key as String,
-              (value as Timestamp?)?.toDate(),
-            ),
-          ) ??
-          {},
+      lastSeen: Map<String, String>.from(data['lastSeen'] as Map? ?? {}),
     );
   }
-  final String id;
-  final List<UserModel> participants;
-  final MessageModel? lastMessage;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final Map<String, bool> typing;
-  final Map<String, DateTime?> lastSeen;
-  Map<String, dynamic> toJson() => _$ChatModelToJson(this);
 
-  Map<String, dynamic> toFirestore() => {
-        'participantIds': participants.map((p) => p.id).toList(),
-        'lastMessageId': lastMessage?.id,
-        'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
-        'updatedAt': Timestamp.fromDate(updatedAt ?? DateTime.now()),
-        'typing': typing,
-        'lastSeen': lastSeen.map(
-          (key, value) => MapEntry(key, Timestamp.fromDate(value ?? DateTime.now())),
-        ),
-      };
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'participantIds': participantIds,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'typing': typing,
+      'lastSeen': lastSeen,
+    };
+  }
 
   ChatModel copyWith({
     String? id,
+    List<String>? participantIds,
     List<UserModel>? participants,
     MessageModel? lastMessage,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? createdAt,
+    String? updatedAt,
     Map<String, bool>? typing,
-    Map<String, DateTime>? lastSeen,
+    Map<String, String>? lastSeen,
   }) {
     return ChatModel(
       id: id ?? this.id,
+      participantIds: participantIds ?? this.participantIds,
       participants: participants ?? this.participants,
       lastMessage: lastMessage ?? this.lastMessage,
       createdAt: createdAt ?? this.createdAt,
@@ -96,10 +100,10 @@ class ChatModel {
 
   bool isTyping(String userId) => typing[userId] ?? false;
 
-  DateTime? getLastSeen(String userId) => lastSeen[userId];
+  DateTime? getLastSeen(String userId) => lastSeen[userId] != null ? DateTime.parse(lastSeen[userId]!) : null;
 
   bool hasUnreadMessages(String userId) {
     if (lastMessage == null || lastSeen[userId] == null) return false;
-    return lastMessage!.timestamp.isAfter(lastSeen[userId]!);
+    return DateTime.parse(lastMessage!.timestamp).isAfter(DateTime.parse(lastSeen[userId]!));
   }
 }

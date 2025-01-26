@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/service/auth/auth_service.dart';
 import 'package:chat_flow/core/service/user/user_service.dart';
+import 'package:chat_flow/utils/tools/auth_exception.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,9 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _saveToken();
       await _updateFcmToken();
       emit(const AuthSuccess());
-    } catch (e) {
-      log('Login hatası: $e');
-      emit(AuthError(e.toString()));
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(AuthExceptionHandler.findExceptionType(e)));
     }
   }
 
@@ -55,9 +55,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _saveToken();
       await _updateFcmToken();
       emit(const AuthSuccess());
-    } catch (e) {
-      log('Register hatası: $e');
-      emit(AuthError(e.toString()));
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(AuthExceptionHandler.findExceptionType(e)));
     }
   }
 

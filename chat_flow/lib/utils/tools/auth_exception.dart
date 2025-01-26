@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 enum AuthResultStatus {
@@ -22,10 +23,10 @@ enum AuthResultStatus {
 }
 
 class AuthExceptionHandler {
-  static String findExceptionType(e) =>
+  static String findExceptionType(FirebaseAuthException e) =>
       AuthExceptionHandler.generateExceptionMessage(AuthExceptionHandler.handleException(e));
 
-  static AuthResultStatus handleException(e) {
+  static AuthResultStatus handleException(FirebaseAuthException e) {
     debugPrint('AuthExceptionHandleError: $e');
     AuthResultStatus status;
 
@@ -64,7 +65,7 @@ class AuthExceptionHandler {
     return status;
   }
 
-  static String generateExceptionMessage(exceptionCode) {
+  static String generateExceptionMessage(AuthResultStatus exceptionCode) {
     String errorMessage;
     switch (exceptionCode) {
       case AuthResultStatus.invalidEmail:

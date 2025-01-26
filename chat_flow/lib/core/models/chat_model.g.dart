@@ -8,28 +8,28 @@ part of 'chat_model.dart';
 
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       id: json['id'] as String,
-      participants:
-          (json['participants'] as List<dynamic>).map((e) => UserModel.fromMap(e as Map<String, dynamic>)).toList(),
-      lastMessage:
-          json['lastMessage'] == null ? null : MessageModel.fromJson(json['lastMessage'] as Map<String, dynamic>),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      typing: (json['typing'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, e as bool),
-          ) ??
-          const {},
-      lastSeen: (json['lastSeen'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, DateTime.parse(e as String)),
-          ) ??
-          const {},
+      participantIds: (json['participantIds'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      participants: (json['participants'] as List<dynamic>)
+          .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      lastMessage: json['lastMessage'] == null
+          ? null
+          : MessageModel.fromJson(json['lastMessage'] as Map<String, dynamic>),
+      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String,
+      typing: Map<String, bool>.from(json['typing'] as Map),
+      lastSeen: Map<String, String>.from(json['lastSeen'] as Map),
     );
 
 Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'id': instance.id,
+      'participantIds': instance.participantIds,
       'participants': instance.participants,
       'lastMessage': instance.lastMessage,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
       'typing': instance.typing,
-      'lastSeen': instance.lastSeen.map((k, e) => MapEntry(k, e?.toIso8601String())),
+      'lastSeen': instance.lastSeen,
     };
