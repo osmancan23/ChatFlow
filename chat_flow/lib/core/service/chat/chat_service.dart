@@ -313,13 +313,21 @@ class ChatService implements IChatService {
 
   /// Bildirim gönderir
   Future<void> _sendNotification(String chatId, String userId, String content) async {
+    log('Bildirim gönderme işlemi başlatılıyor...');
+    log('Chat ID: $chatId');
+    log('Gönderen ID: $userId');
+    log('Mesaj içeriği: $content');
+
     final chatDoc = await _firestore.collection('chats').doc(chatId).get();
     final participantIds = List<String>.from(chatDoc.data()?['participantIds'] as List);
     final otherUserId = participantIds.firstWhere((id) => id != userId);
+    log('Alıcı ID: $otherUserId');
 
     final currentUserDoc = await _firestore.collection('users').doc(userId).get();
     final currentUser = UserModel.fromFirestore(currentUserDoc);
+    log('Gönderen kullanıcı: ${currentUser.fullName}');
 
     await locator<NotificationManager>().sendMessage(otherUserId, content, currentUser.fullName);
+    log('Bildirim gönderme işlemi tamamlandı');
   }
 }

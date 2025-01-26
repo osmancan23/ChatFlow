@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:chat_flow/core/init/locale_storage/locale_storage_manager.dart';
 import 'package:chat_flow/core/models/user_model.dart';
@@ -5,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 @immutable
 abstract class IAuthService {
@@ -112,6 +114,10 @@ class AuthService extends IAuthService {
   Future<void> saveFcmToken(String userId, String? token) async {
     if (token == null) return;
 
+    log('FCM token kaydediliyor...');
+    log('User ID: $userId');
+    log('Token: $token');
+
     // Kullanıcının Firestore'daki verisini güncelle
     await _firebaseFirestore.collection('users').doc(userId).set(
       {
@@ -119,15 +125,22 @@ class AuthService extends IAuthService {
       },
       SetOptions(merge: true),
     );
+    log("FCM token Firestore'a kaydedildi");
   }
 
   @override
   Future<String?> getUserFcmToken(String userId) async {
+    log("Kullanıcının FCM token'ı alınıyor...");
+    log('User ID: $userId');
+
     final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     if (userDoc.exists) {
-      return userDoc['fcmToken'] as String?;
+      final token = userDoc['fcmToken'] as String?;
+      log('FCM token bulundu: $token');
+      return token;
     }
+    log('Kullanıcı bulunamadı veya FCM token yok');
     return null;
   }
 }
