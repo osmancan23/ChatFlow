@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_flow/core/base/view_model/base_view_model.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
@@ -21,6 +23,9 @@ class HomeViewModel extends BaseViewModel {
   /// Navigasyon servisi
   final _navigationService = locator<NavigationService>();
 
+  /// Stream subscription
+  StreamSubscription<List<ChatModel>>? _chatsSubscription;
+
   /// Sohbetler listesi
   List<ChatModel> _chats = [];
   List<ChatModel> get chats => _chats;
@@ -35,7 +40,7 @@ class HomeViewModel extends BaseViewModel {
     _isLoading = true;
     notifyListeners();
 
-    _chatService.getUserChats().listen((chats) {
+    _chatsSubscription = _chatService.getUserChats().listen((chats) {
       _chats = chats;
       _isLoading = false;
       notifyListeners();
@@ -64,5 +69,11 @@ class HomeViewModel extends BaseViewModel {
       context: context,
       page: const ProfileView(),
     );
+  }
+
+  @override
+  void dispose() {
+    _chatsSubscription?.cancel();
+    super.dispose();
   }
 }

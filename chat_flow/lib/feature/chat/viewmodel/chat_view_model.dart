@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_flow/core/base/view_model/base_view_model.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/models/message_model.dart';
@@ -17,6 +19,11 @@ class ChatViewModel extends BaseViewModel {
 
   /// Scroll controller'ı
   final scrollController = ScrollController();
+
+  /// Stream subscriptions
+  StreamSubscription<List<MessageModel>>? _messagesSubscription;
+  StreamSubscription<UserModel?>? _otherUserSubscription;
+  StreamSubscription<bool>? _typingStatusSubscription;
 
   /// Chat ID
   String? _chatId;
@@ -50,7 +57,7 @@ class ChatViewModel extends BaseViewModel {
   void _listenToMessages() {
     if (_chatId == null) return;
 
-    _chatService.getChatMessages(_chatId!).listen((messages) {
+    _messagesSubscription = _chatService.getChatMessages(_chatId!).listen((messages) {
       _messages = messages;
       notifyListeners();
       _markMessagesAsRead();
@@ -61,7 +68,7 @@ class ChatViewModel extends BaseViewModel {
   void _listenToOtherUser() {
     if (_chatId == null) return;
 
-    _chatService.getChatOtherUser(_chatId!).listen((user) {
+    _otherUserSubscription = _chatService.getChatOtherUser(_chatId!).listen((user) {
       _otherUser = user;
       notifyListeners();
     });
@@ -71,7 +78,7 @@ class ChatViewModel extends BaseViewModel {
   void _listenToTypingStatus() {
     if (_chatId == null) return;
 
-    _chatService.listenToOtherUserTypingStatus(_chatId!).listen((isTyping) {
+    _typingStatusSubscription = _chatService.listenToOtherUserTypingStatus(_chatId!).listen((isTyping) {
       _otherUserTyping = isTyping;
       notifyListeners();
     });
@@ -85,8 +92,8 @@ class ChatViewModel extends BaseViewModel {
       chatId: _chatId!,
       content: messageController.text.trim(),
     );
-
     messageController.clear();
+
     await updateTypingStatus(isTyping: false);
   }
 
@@ -117,6 +124,9 @@ class ChatViewModel extends BaseViewModel {
   void dispose() {
     messageController.dispose();
     scrollController.dispose();
+    _messagesSubscription?.cancel();
+    _otherUserSubscription?.cancel();
+    _typingStatusSubscription?.cancel();
     super.dispose();
   }
 }

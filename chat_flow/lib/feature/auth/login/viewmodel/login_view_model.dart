@@ -28,7 +28,7 @@ class LoginViewModel extends BaseViewModel {
   void onAuthStateChanged(BuildContext context, AuthState state) {
     if (state is AuthSuccess) {
       navigateToPageClear(context, const MainView());
-    } else if (state is AuthFailure) {
+    } else if (state is AuthError) {
       showError(context, state.message);
     }
   }

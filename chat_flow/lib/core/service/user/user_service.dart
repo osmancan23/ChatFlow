@@ -17,6 +17,12 @@ abstract class IUserService {
 
   /// Bildirim tercihlerini günceller
   Future<void> updateNotificationsEnabled({required bool isEnabled});
+
+  /// Çevrimiçi durumunu günceller
+  Future<void> updateOnlineStatus({required bool isOnline});
+
+  /// Son görülme zamanını günceller
+  Future<void> updateLastSeen();
 }
 
 /// Kullanıcı servisi implementasyonu
@@ -29,15 +35,16 @@ class UserService extends IUserService {
   @override
   Future<UserModel?> getCurrentUserProfile() async {
     try {
-      final userId = FirebaseAuth.instance.currentUser!.uid;
-      final docSnapshot = await _firestore.collection('users').doc(userId).get();
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return null;
 
-      if (!docSnapshot.exists) {
-        log('Kullanıcı bulunamadı');
-        return null;
-      }
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (!doc.exists) return null;
 
-      return UserModel.fromFirestore(docSnapshot);
+      return UserModel.fromMap({
+        'id': doc.id,
+        ...doc.data()!,
+      });
     } catch (e) {
       log('Kullanıcı profili getirilirken hata: $e');
       return null;
@@ -60,7 +67,9 @@ class UserService extends IUserService {
   @override
   Future<void> updateNotificationsEnabled({required bool isEnabled}) async {
     try {
-      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return;
+
       await _firestore.collection('users').doc(userId).update({
         'notificationsEnabled': isEnabled,
       });
@@ -68,6 +77,39 @@ class UserService extends IUserService {
     } catch (e) {
       log('Bildirim tercihleri güncellenirken hata: $e');
       throw Exception('Bildirim tercihleri güncellenemedi');
+    }
+  }
+
+  /// Çevrimiçi durumunu günceller
+  @override
+  Future<void> updateOnlineStatus({required bool isOnline}) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return;
+
+      await _firestore.collection('users').doc(userId).update({
+        'isOnline': isOnline,
+        'lastSeen': isOnline ? null : FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log('Çevrimiçi durumu güncellenirken hata: $e');
+      throw Exception('Çevrimiçi durumu güncellenemedi');
+    }
+  }
+
+  /// Son görülme zamanını günceller
+  @override
+  Future<void> updateLastSeen() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return;
+
+      await _firestore.collection('users').doc(userId).update({
+        'lastSeen': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      log('Son görülme zamanı güncellenirken hata: $e');
+      throw Exception('Son görülme zamanı güncellenemedi');
     }
   }
 }

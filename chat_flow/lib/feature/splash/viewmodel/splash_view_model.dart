@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chat_flow/core/base/view_model/base_view_model.dart';
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';
@@ -24,9 +26,10 @@ class SplashViewModel extends BaseViewModel {
 
   /// AuthBloc state'ini dinler
   void onAuthStateChanged(BuildContext context, AuthState state) {
+    log('AuthStateChanged: $state');
     if (state is AuthSuccess) {
       navigateToPageClear(context, const MainView());
-    } else if (state is AuthInitial) {
+    } else if (state is AuthInitial || state is AuthError) {
       navigateToPageClear(context, const LoginView());
     }
   }

@@ -45,23 +45,25 @@ class LoginView extends StatelessWidget {
 
   /// Body widget'ı
   Widget _buildBody(BuildContext context, LoginViewModel viewModel) {
-    return Padding(
-      padding: PaddingConstants.paddingAllSmall,
-      child: Form(
-        key: viewModel.formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildLottieAnimation(),
-            20.h.ph,
-            _buildEmailField(viewModel),
-            const SizedBox(height: PaddingConstants.small),
-            _buildPasswordField(viewModel),
-            30.h.ph,
-            _buildLoginButton(context, viewModel),
-            20.h.ph,
-            _buildRegisterRow(context, viewModel),
-          ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: PaddingConstants.paddingAllSmall,
+        child: Form(
+          key: viewModel.formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLottieAnimation(),
+              20.h.ph,
+              _buildEmailField(viewModel),
+              const SizedBox(height: PaddingConstants.small),
+              _buildPasswordField(viewModel),
+              30.h.ph,
+              _buildLoginButton(context, viewModel),
+              20.h.ph,
+              _buildRegisterRow(context, viewModel),
+            ],
+          ),
         ),
       ),
     );

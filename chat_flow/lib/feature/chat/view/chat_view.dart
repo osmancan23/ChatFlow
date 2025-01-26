@@ -35,13 +35,15 @@ class ChatView extends StatelessWidget {
       child: Consumer<ChatViewModel>(
         builder: (context, viewModel, _) => Scaffold(
           appBar: _ChatAppbarWidget(chatViewModel: viewModel),
-          body: Column(
-            children: [
-              Expanded(
-                child: _MessageListWidget(viewModel: viewModel),
-              ),
-              _MessageInputWidget(viewModel: viewModel),
-            ],
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: _MessageListWidget(viewModel: viewModel),
+                ),
+                _MessageInputWidget(viewModel: viewModel),
+              ],
+            ),
           ),
         ),
       ),

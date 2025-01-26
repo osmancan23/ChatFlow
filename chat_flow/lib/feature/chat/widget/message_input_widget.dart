@@ -4,7 +4,6 @@ part of '../view/chat_view.dart';
 class _MessageInputWidget extends StatelessWidget {
   const _MessageInputWidget({
     required this.viewModel,
-    super.key,
   });
 
   final ChatViewModel viewModel;

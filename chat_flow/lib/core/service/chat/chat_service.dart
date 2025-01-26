@@ -289,12 +289,18 @@ class ChatService implements IChatService {
 
   /// Yeni bir mesaj oluşturur
   Future<DocumentReference> _createMessage(String chatId, String userId, String content) async {
-    return _firestore.collection('chats').doc(chatId).collection('messages').add({
+    final timestamp = FieldValue.serverTimestamp();
+    final messageRef = _firestore.collection('chats').doc(chatId).collection('messages').doc();
+
+    await messageRef.set({
+      'id': messageRef.id,
       'senderId': userId,
       'content': content,
-      'timestamp': FieldValue.serverTimestamp(),
+      'timestamp': timestamp,
       'isRead': false,
     });
+
+    return messageRef;
   }
 
   /// Sohbeti son mesaj ile günceller

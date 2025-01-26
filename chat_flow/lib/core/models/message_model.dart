@@ -19,11 +19,13 @@ class MessageModel {
 
   factory MessageModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data()! as Map<String, dynamic>;
+    final timestamp = data['timestamp'] as Timestamp?;
+    
     return MessageModel(
       id: doc.id,
       senderId: data['senderId'] as String,
       content: data['content'] as String,
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      timestamp: timestamp?.toDate() ?? DateTime.now(),
       isRead: data['isRead'] as bool? ?? false,
       imageUrl: data['imageUrl'] as String?,
     );
