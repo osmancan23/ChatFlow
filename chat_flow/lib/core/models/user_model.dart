@@ -24,10 +24,16 @@ class UserModel {
       profilePhoto: map['profilePhoto'] as String?,
       bio: map['bio'] as String?,
       isOnline: map['isOnline'] as bool,
-      lastSeen: map['lastSeen'] as String?,
-      chatIds: (map['chatIds'] as List).map((e) => e as String).toList(),
-      createdAt: map['createdAt'] as String,
-      updatedAt: map['updatedAt'] as String,
+      lastSeen: map['lastSeen'] is Timestamp 
+          ? (map['lastSeen'] as Timestamp).toDate().toIso8601String()
+          : map['lastSeen'] as String?,
+      chatIds: (map['chatIds'] as List?)?.map((e) => e as String).toList() ?? [],
+      createdAt: map['createdAt'] is Timestamp 
+          ? (map['createdAt'] as Timestamp).toDate().toIso8601String()
+          : map['createdAt'] as String?,
+      updatedAt: map['updatedAt'] is Timestamp 
+          ? (map['updatedAt'] as Timestamp).toDate().toIso8601String()
+          : map['updatedAt'] as String?,
       notificationsEnabled: map['notificationsEnabled'] as bool? ?? true,
       platform: map['platform'] as String?,
     );

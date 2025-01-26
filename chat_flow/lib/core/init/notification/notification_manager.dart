@@ -163,7 +163,6 @@ final class NotificationManager {
       log('Bildirim içeriği: ${message.toMap()}');
       
       final notification = message.notification;
-      final android = notification?.android;
       final data = message.data;
 
       // Bildirim içeriğini kontrol et
