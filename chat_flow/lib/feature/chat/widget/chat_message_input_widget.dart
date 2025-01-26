@@ -63,7 +63,7 @@ class _ChatMessageInputWidgetState extends State<_ChatMessageInputWidget> {
               onPressed: () async {
                 if (widget._messageController.text.isNotEmpty) {
                   try {
-                    await _chatService.sendMessage(widget.chatId, widget._messageController.text);
+                    await _chatService.sendMessage(chatId: widget.chatId, content: widget._messageController.text);
                   } catch (e) {
                     print(e);
                   }

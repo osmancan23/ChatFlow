@@ -47,7 +47,7 @@ extension StringToDateTime on String {
   ///MARK: 2021-10-10T10:00:00.000Z -> 10.10.2021 Convert
   String get toDayMonthYear => split('T').first.split('-').reversed.join('.');
 
-  String get formatDateDifference {
+  String? get formatDateDifference {
     // Verilen tarihi DateTime nesnesine dönüştürme
     final givenDate = DateTime.parse(this);
 

@@ -1,3 +1,5 @@
+import 'package:chat_flow/utils/extension/iterable_extensions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chat_flow/core/models/message_model.dart';
@@ -53,7 +55,7 @@ class ChatModel {
   Map<String, dynamic> toFirestore() => {
         'participantIds': participants.map((p) => p.id).toList(),
         'lastMessageId': lastMessage?.id,
-        'createdAt': Timestamp.fromDate(createdAt?? DateTime.now()),
+        'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
         'updatedAt': Timestamp.fromDate(updatedAt ?? DateTime.now()),
         'typing': typing,
         'lastSeen': lastSeen.map(
@@ -85,6 +87,11 @@ class ChatModel {
 
   String getOtherParticipantId(String currentUserId) {
     return participants.firstWhere((p) => p.id != currentUserId).id;
+  }
+
+  UserModel? getOtherUser() {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    return participants.where((p) => p.id != currentUserId).getIterableItem(0);
   }
 
   bool isTyping(String userId) => typing[userId] ?? false;

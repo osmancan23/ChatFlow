@@ -21,7 +21,7 @@ abstract class IChatService {
 
   // Mesaj işlemleri
   Stream<List<MessageModel>> getChatMessages(String chatId);
-  Future<MessageModel> sendMessage(String chatId, String content);
+  Future<MessageModel> sendMessage({required String chatId, required String content});
   Future<void> markMessageAsRead(String chatId);
 
   // Kullanıcı işlemleri
@@ -128,7 +128,7 @@ class ChatService implements IChatService {
 
   /// Yeni bir mesaj gönderir ve bildirim oluşturur
   @override
-  Future<MessageModel> sendMessage(String chatId, String content) async {
+  Future<MessageModel> sendMessage({required String chatId, required String content}) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     // Mesajı oluştur

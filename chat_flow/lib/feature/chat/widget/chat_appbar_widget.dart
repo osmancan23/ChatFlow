@@ -53,9 +53,7 @@ class _ChatAppbarWidgetState extends State<_ChatAppbarWidget> {
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 200),
                         child: CustomText(
-                          data?.lastSeen?.formatDateDifference == 'Şimdi'
-                              ? 'Çevrimiçi'
-                              : 'Son görülme: ${data?.lastSeen?.formatDateDifference}',
+                          data?.lastSeen!.formatDateDifference == 'Şimdi' ? 'Çevrimiçi' : 'Son görülme: ',
                           textStyle: context.theme.textTheme.bodySmall?.copyWith(),
                         ),
                       ),

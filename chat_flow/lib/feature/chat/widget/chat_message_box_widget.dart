@@ -31,16 +31,17 @@ class _ChatMessageBox extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
+                    CustomText(
                       message.content,
-                      style: TextStyle(
-                        color: message.isMe ? Colors.white : Colors.black,
+                      textStyle: context.theme.textTheme.bodySmall?.copyWith(
+                        fontSize: 12,
+                        color: message.isMe ? Colors.white70 : Colors.black54,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    CustomText(
                       message.timestamp.toIso8601String().formatDateDifference,
-                      style: TextStyle(
+                      textStyle: context.theme.textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         color: message.isMe ? Colors.white70 : Colors.black54,
                       ),

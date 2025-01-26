@@ -1,92 +1,129 @@
 import 'package:chat_flow/core/components/cacheNetworkImage/cache_network_image_widget.dart';
-import 'package:chat_flow/core/components/streamBuilder/stream_builder_widget.dart';
 import 'package:chat_flow/core/components/text/custom_text.dart';
+import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
-import 'package:chat_flow/core/models/user_model.dart';
-import 'package:chat_flow/core/service/chat_service.dart';
 import 'package:chat_flow/feature/chat/view/chat_view.dart';
-import 'package:chat_flow/feature/users/view/users_view.dart';
+import 'package:chat_flow/feature/home/viewmodel/home_view_model.dart';
 import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:chat_flow/utils/extension/string_extension.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 part '../widget/chat_list_tile_widget.dart';
 
-class HomeView extends StatefulWidget {
+/// Ana ekran
+/// Kullanıcının mevcut sohbetlerini görüntülediği ve yönettiği ekran
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  late IChatService _chatService;
-
-  @override
-  void initState() {
-    _chatService = locator<ChatService>();
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sohbetler'),
+    return ChangeNotifierProvider(
+      create: (_) => HomeViewModel(),
+      child: Consumer<HomeViewModel>(
+        builder: (context, viewModel, _) => Scaffold(
+          appBar: _buildAppBar(context, viewModel),
+          body: _buildBody(context, viewModel),
+          floatingActionButton: _buildFAB(context, viewModel),
+        ),
       ),
-      body: StreamBuilderWidget(
-        stream: _chatService.getUserChats(),
-        builder: (context, List<ChatModel>? chats) {
-          return (chats?.isNotEmpty ?? false)
-              ? ListView.builder(
-                  itemCount: chats?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final chat = chats![index];
-                    return _ChatListTileWidget(
-                      index: index,
-                      chat: chat,
-                    );
-                  },
-                )
-              : Center(
-                  child: CustomText(
-                    'Sohbet Bulunamadı',
-                    textStyle: context.theme.textTheme.bodyLarge,
-                  ),
-                );
-        },
-      ),
-      floatingActionButton: const _FloatingButtonWidget(),
     );
   }
-}
 
-class _FloatingButtonWidget extends StatelessWidget {
-  const _FloatingButtonWidget();
+  /// AppBar widget'ı
+  PreferredSizeWidget _buildAppBar(BuildContext context, HomeViewModel viewModel) {
+    return AppBar(
+      title: const CustomText(_HomeViewStrings.title),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.person),
+          onPressed: () => viewModel.navigateToProfile(context),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.elasticOut,
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: value,
-          child: FloatingActionButton(
-            onPressed: () {
-              locator<NavigationService>().navigateToPage(
-                context: context,
-                page: const UsersView(),
-              );
-            },
-            child: const Icon(Icons.chat),
-          ),
+  /// Body widget'ı
+  Widget _buildBody(BuildContext context, HomeViewModel viewModel) {
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (viewModel.chats.isEmpty) {
+      return Center(
+        child: CustomText(
+          _HomeViewStrings.noChats,
+          textStyle: context.theme.textTheme.bodyLarge,
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: viewModel.chats.length,
+      padding: PaddingConstants.paddingAllSmall,
+      itemBuilder: (context, index) {
+        final chat = viewModel.chats[index];
+        return _ChatListTile(
+          chat: chat,
+          onTap: () => viewModel.onChatTap(context, chat.id),
         );
       },
     );
   }
+
+  /// Floating Action Button widget'ı
+  Widget _buildFAB(BuildContext context, HomeViewModel viewModel) {
+    return FloatingActionButton(
+      onPressed: () => viewModel.navigateToUsers(context),
+      child: const Icon(Icons.add),
+    );
+  }
+}
+
+/// Sohbet liste öğesi widget'ı
+class _ChatListTile extends StatelessWidget {
+  const _ChatListTile({
+    required this.chat,
+    required this.onTap,
+  });
+
+  final ChatModel chat;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: CircleAvatar(
+        backgroundImage:
+            chat.getOtherUser()?.profilePhoto != null ? NetworkImage(chat.getOtherUser()!.profilePhoto!) : null,
+        child: chat.getOtherUser()?.profilePhoto == null ? Icon(Icons.person, size: 24.r) : null,
+      ),
+      title: CustomText(
+        chat.getOtherUser()?.fullName,
+        textStyle: context.theme.textTheme.titleMedium,
+      ),
+      subtitle: Row(
+        children: [
+          Expanded(
+            child: CustomText(
+              chat.lastMessage?.content ?? '',
+              textStyle: context.theme.textTheme.bodySmall,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Home ekranı için string sabitleri
+class _HomeViewStrings {
+  const _HomeViewStrings._();
+
+  static const String title = 'Sohbetler';
+  static const String noChats = 'Henüz sohbet yok';
 }

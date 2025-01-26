@@ -34,7 +34,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<SendMessage>((event, emit) async {
       emit(ChatMessageSending());
       try {
-        await _chatService.sendMessage(event.chatId, event.message);
+        await _chatService.sendMessage(chatId: event.chatId, content: event.message);
         emit(ChatMessageSent());
       } catch (e) {
         emit(ChatMessageError(e.toString()));
