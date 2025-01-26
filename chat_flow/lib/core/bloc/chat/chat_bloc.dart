@@ -44,7 +44,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<MarkMessageAsRead>((event, emit) async {
       emit(ChatMessageMarkingAsRead());
       try {
-        await _chatService.markMessageAsRead(event.chatId);
+        await _chatService.markMessageAsRead(event.chatId, event.messageId);
         emit(ChatMessageMarkedAsRead());
       } catch (e) {
         emit(ChatMessageMarkAsReadError(e.toString()));

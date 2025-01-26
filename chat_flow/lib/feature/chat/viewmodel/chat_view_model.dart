@@ -37,18 +37,13 @@ class ChatViewModel extends BaseViewModel {
   bool _otherUserTyping = false;
   bool get otherUserTyping => _otherUserTyping;
 
-  /// Son mesajın okunma durumu
-  bool _isLastMessageRead = false;
-  bool get isLastMessageRead => _isLastMessageRead;
-
   /// Chat'i başlat
   void initChat(String chatId) {
     _chatId = chatId;
     _listenToMessages();
     _listenToOtherUser();
     _listenToTypingStatus();
-    _listenToReadStatus();
-    notifyListeners();
+    _markMessagesAsRead();
   }
 
   /// Mesajları dinle
@@ -58,7 +53,7 @@ class ChatViewModel extends BaseViewModel {
     _chatService.getChatMessages(_chatId!).listen((messages) {
       _messages = messages;
       notifyListeners();
-      _scrollToBottom();
+      _markMessagesAsRead();
     });
   }
 
@@ -82,57 +77,40 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
-  /// Okunma durumunu dinle
-  void _listenToReadStatus() {
-    if (_chatId == null) return;
-
-    _chatService.getLastMessageReadStatus(_chatId!).listen((isRead) {
-      _isLastMessageRead = isRead;
-      notifyListeners();
-    });
-  }
-
   /// Mesaj gönder
-  void sendMessage(BuildContext context) {
+  Future<void> sendMessage(BuildContext context) async {
     if (_chatId == null || messageController.text.trim().isEmpty) return;
 
-    _chatService.sendMessage(
+    await _chatService.sendMessage(
       chatId: _chatId!,
       content: messageController.text.trim(),
     );
 
     messageController.clear();
-    updateTypingStatus(isTyping: false);
+    await updateTypingStatus(isTyping: false);
   }
 
   /// Yazma durumunu güncelle
-  void updateTypingStatus({required bool isTyping}) {
+  Future<void> updateTypingStatus({required bool isTyping}) async {
     if (_chatId == null) return;
 
-    _chatService.updateChatTypingStatus(
+    await _chatService.updateChatTypingStatus(
       chatId: _chatId!,
       isTyping: isTyping,
     );
   }
 
   /// Mesajları okundu olarak işaretle
-  void markMessagesAsRead() {
+  Future<void> _markMessagesAsRead() async {
     if (_chatId == null) return;
 
-    _chatService.markMessageAsRead(_chatId!);
-  }
+    final unreadMessages = _messages.where(
+      (message) => message.senderId != currentUserId && !message.isRead,
+    );
 
-  /// Sohbetin en altına kaydır
-  void _scrollToBottom() {
-    if (!scrollController.hasClients) return;
-
-    Future.delayed(const Duration(milliseconds: 100), () {
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
+    for (final message in unreadMessages) {
+      await _chatService.markMessageAsRead(_chatId!, message.id);
+    }
   }
 
   @override

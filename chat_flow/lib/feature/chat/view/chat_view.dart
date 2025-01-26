@@ -38,29 +38,9 @@ class ChatView extends StatelessWidget {
       },
       child: Consumer<ChatViewModel>(
         builder: (context, viewModel, _) => Scaffold(
-          appBar: _buildAppBar(context, viewModel),
+          appBar: _ChatAppbarWidget(chatViewModel: viewModel),
           body: _buildBody(context, viewModel),
         ),
-      ),
-    );
-  }
-
-  /// AppBar widget'ı
-  PreferredSizeWidget _buildAppBar(BuildContext context, ChatViewModel viewModel) {
-    return AppBar(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            viewModel.otherUser?.fullName ?? '',
-            textStyle: context.theme.textTheme.titleMedium,
-          ),
-          if (viewModel.otherUserTyping)
-            CustomText(
-              _ChatViewStrings.typingText,
-              textStyle: context.theme.textTheme.bodySmall,
-            ),
-        ],
       ),
     );
   }
@@ -86,10 +66,13 @@ class ChatView extends StatelessWidget {
       itemCount: viewModel.messages.length,
       itemBuilder: (context, index) {
         final message = viewModel.messages[index];
+        final isLastMessage = index == 0;
+        final showStatus = isLastMessage && message.senderId == viewModel.currentUserId;
         return _MessageBubble(
           message: message,
           isMe: message.senderId == viewModel.currentUserId,
-          isRead: viewModel.isLastMessageRead,
+          showStatus: showStatus,
+          isRead: message.isRead,
         );
       },
     );
@@ -124,11 +107,13 @@ class _MessageBubble extends StatelessWidget {
   const _MessageBubble({
     required this.message,
     required this.isMe,
+    required this.showStatus,
     required this.isRead,
   });
 
   final MessageModel message;
   final bool isMe;
+  final bool showStatus;
   final bool isRead;
 
   @override
@@ -143,8 +128,13 @@ class _MessageBubble extends StatelessWidget {
         ),
         padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
-          color: isMe ? context.theme.primaryColor : context.theme.cardColor,
-          borderRadius: BorderRadius.circular(12.r),
+          color: isMe ? context.theme.primaryColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.r),
+            topRight: Radius.circular(12.r),
+            bottomLeft: Radius.circular(isMe ? 12.r : 0),
+            bottomRight: Radius.circular(isMe ? 0 : 12.r),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -152,15 +142,16 @@ class _MessageBubble extends StatelessWidget {
             CustomText(
               message.content,
               textStyle: context.theme.textTheme.bodyMedium?.copyWith(
-                color: isMe ? Colors.white : null,
+                color: isMe ? Colors.white : Colors.black87,
               ),
             ),
-            if (isMe) ...[
+            if (showStatus) ...[
               5.h.ph,
-              Icon(
-                isRead ? Icons.done_all : Icons.done,
-                size: 16.r,
-                color: Colors.white70,
+              CustomText(
+                isRead ? _ChatViewStrings.readText : _ChatViewStrings.sentText,
+                textStyle: context.theme.textTheme.bodySmall?.copyWith(
+                  color: isMe ? Colors.white70 : Colors.grey,
+                ),
               ),
             ],
           ],
@@ -175,5 +166,8 @@ class _ChatViewStrings {
   const _ChatViewStrings._();
 
   static const String typingText = 'Yazıyor...';
+  static const String onlineText = 'Çevrimiçi';
   static const String messageHint = 'Mesajınızı yazın...';
+  static const String readText = 'Görüldü';
+  static const String sentText = 'Gönderildi';
 }

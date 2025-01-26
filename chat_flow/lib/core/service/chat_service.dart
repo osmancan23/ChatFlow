@@ -22,7 +22,7 @@ abstract class IChatService {
   // Mesaj işlemleri
   Stream<List<MessageModel>> getChatMessages(String chatId);
   Future<MessageModel> sendMessage({required String chatId, required String content});
-  Future<void> markMessageAsRead(String chatId);
+  Future<void> markMessageAsRead(String chatId, String messageId);
 
   // Kullanıcı işlemleri
   Stream<List<UserModel>> getAvailableUsers();
@@ -146,33 +146,13 @@ class ChatService implements IChatService {
 
   /// Son mesajı okundu olarak işaretler
   @override
-  Future<void> markMessageAsRead(String chatId) async {
+  Future<void> markMessageAsRead(String chatId, String messageId) async {
     try {
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      final chatDoc = await _firestore.collection('chats').doc(chatId).get();
-
-      if (!chatDoc.exists) return;
-
-      final lastMessageId = chatDoc.data()?['lastMessageId'] as String?;
-      if (lastMessageId?.isEmpty ?? true) return;
-
-      final messageDoc = await _firestore
-          .collection('chats')
-          .doc(chatId)
-          .collection('messages')
-          .doc(lastMessageId)
-          .get();
-
-      if (!messageDoc.exists) return;
-
-      final senderId = messageDoc.data()?['senderId'] as String?;
-      if (senderId == currentUserId) return;
-
       await _firestore
           .collection('chats')
           .doc(chatId)
           .collection('messages')
-          .doc(lastMessageId)
+          .doc(messageId)
           .update({'isRead': true});
     } catch (e) {
       log('Mesaj okundu işaretlenirken hata: $e');
@@ -236,7 +216,10 @@ class ChatService implements IChatService {
 
       return _firestore.collection('users').doc(otherUserId).snapshots().map((userSnapshot) {
         if (!userSnapshot.exists) return null;
-        return UserModel.fromMap(userSnapshot.data()!);
+        return UserModel.fromMap({
+          'id': userSnapshot.id,
+          ...userSnapshot.data()!,
+        });
       });
     });
   }

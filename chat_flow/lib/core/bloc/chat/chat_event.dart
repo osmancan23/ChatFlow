@@ -29,6 +29,7 @@ final class SendMessage extends ChatEvent {
 // MARK MESSAGE AS READ
 
 final class MarkMessageAsRead extends ChatEvent {
-  MarkMessageAsRead({required this.chatId});
+  MarkMessageAsRead(this.messageId, {required this.chatId});
   final String chatId;
+  final String messageId;
 }
