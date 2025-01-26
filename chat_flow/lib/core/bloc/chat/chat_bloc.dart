@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
-import 'package:chat_flow/core/service/chat_service.dart';
+import 'package:chat_flow/core/service/chat/chat_service.dart';
 import 'package:meta/meta.dart';
 
 part 'chat_event.dart';

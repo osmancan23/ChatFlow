@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:chat_flow/core/models/user_model.dart';
 import 'package:chat_flow/core/service/firebase/firebase_storage_service.dart';
-import 'package:chat_flow/core/service/user_service.dart';
+import 'package:chat_flow/core/service/user/user_service.dart';
 import 'package:meta/meta.dart';
 
 part 'user_event.dart';

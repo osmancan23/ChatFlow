@@ -10,7 +10,7 @@ import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 
-import 'package:chat_flow/core/service/user_service.dart';
+import 'package:chat_flow/core/service/user/user_service.dart';
 import 'package:chat_flow/feature/profile/viewmodel/profile_view_model.dart';
 import 'package:chat_flow/utils/extension/num_extensions.dart';
 import 'package:flutter/material.dart';

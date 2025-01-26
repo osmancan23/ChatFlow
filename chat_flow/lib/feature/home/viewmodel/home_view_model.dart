@@ -2,7 +2,7 @@ import 'package:chat_flow/core/base/view_model/base_view_model.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/init/navigation/navigation_service.dart';
 import 'package:chat_flow/core/models/chat_model.dart';
-import 'package:chat_flow/core/service/chat_service.dart';
+import 'package:chat_flow/core/service/chat/chat_service.dart';
 import 'package:chat_flow/feature/chat/view/chat_view.dart';
 import 'package:chat_flow/feature/profile/view/profile_view.dart';
 import 'package:chat_flow/feature/users/view/users_view.dart';

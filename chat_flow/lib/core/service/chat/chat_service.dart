@@ -86,7 +86,9 @@ class ChatService implements IChatService {
       'participantIds': participantIds,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
+      // ignore: inference_failure_on_collection_literal
       'typing': {},
+      // ignore: inference_failure_on_collection_literal
       'lastSeen': {},
     });
 
@@ -148,12 +150,7 @@ class ChatService implements IChatService {
   @override
   Future<void> markMessageAsRead(String chatId, String messageId) async {
     try {
-      await _firestore
-          .collection('chats')
-          .doc(chatId)
-          .collection('messages')
-          .doc(messageId)
-          .update({'isRead': true});
+      await _firestore.collection('chats').doc(chatId).collection('messages').doc(messageId).update({'isRead': true});
     } catch (e) {
       log('Mesaj okundu işaretlenirken hata: $e');
       throw Exception('Mesaj okundu işaretlenemedi');
@@ -228,19 +225,15 @@ class ChatService implements IChatService {
   @override
   Stream<bool> getLastMessageReadStatus(String chatId) {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    
+
     return _firestore.collection('chats').doc(chatId).snapshots().asyncMap((chatDoc) async {
       if (!chatDoc.exists) return false;
 
       final lastMessageId = chatDoc.data()?['lastMessageId'] as String?;
       if (lastMessageId?.isEmpty ?? true) return false;
 
-      final messageDoc = await _firestore
-          .collection('chats')
-          .doc(chatId)
-          .collection('messages')
-          .doc(lastMessageId)
-          .get();
+      final messageDoc =
+          await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).get();
 
       if (!messageDoc.exists) return false;
 
@@ -258,7 +251,7 @@ class ChatService implements IChatService {
     final participantDocs = await Future.wait(
       participantIds.map((id) => _firestore.collection('users').doc(id).get()),
     );
-    
+
     return participantDocs
         .where((doc) => doc.exists)
         .map(
@@ -274,22 +267,15 @@ class ChatService implements IChatService {
   Future<MessageModel?> _getLastMessage(String chatId, String? lastMessageId) async {
     if (lastMessageId == null) return null;
 
-    final messageDoc = await _firestore
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages')
-        .doc(lastMessageId)
-        .get();
+    final messageDoc = await _firestore.collection('chats').doc(chatId).collection('messages').doc(lastMessageId).get();
 
     return messageDoc.exists ? MessageModel.fromFirestore(messageDoc) : null;
   }
 
   /// Mevcut bir sohbeti bulur
   Future<ChatModel?> _findExistingChat(List<String> participantIds) async {
-    final existingChats = await _firestore
-        .collection('chats')
-        .where('participantIds', arrayContainsAny: participantIds)
-        .get();
+    final existingChats =
+        await _firestore.collection('chats').where('participantIds', arrayContainsAny: participantIds).get();
 
     for (final chat in existingChats.docs) {
       final chatParticipantIds = List<String>.from(chat['participantIds'] as List);

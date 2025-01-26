@@ -5,7 +5,7 @@ import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
 import 'package:chat_flow/core/models/user_model.dart';
 import 'package:chat_flow/core/service/firebase/firebase_storage_service.dart';
-import 'package:chat_flow/core/service/user_service.dart';
+import 'package:chat_flow/core/service/user/user_service.dart';
 import 'package:chat_flow/feature/auth/login/view/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

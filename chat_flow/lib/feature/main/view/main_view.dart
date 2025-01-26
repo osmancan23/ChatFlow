@@ -4,6 +4,8 @@ import 'package:chat_flow/feature/profile/view/profile_view.dart';
 import 'package:chat_flow/utils/extension/context_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+part '../widget/main_body_widget.dart';
+part '../widget/main_bottom_navigation_bar_widget.dart';
 
 /// Ana uygulama ekranı
 /// Alt navigasyon barı ile farklı ekranlar arasında geçiş sağlayan ekran
@@ -16,41 +18,10 @@ class MainView extends StatelessWidget {
       create: (_) => MainViewModel(),
       child: Consumer<MainViewModel>(
         builder: (context, viewModel, _) => Scaffold(
-          body: _buildBody(viewModel),
-          bottomNavigationBar: _buildBottomNavigationBar(context, viewModel),
+          body: _MainBodyWidget(viewModel: viewModel),
+          bottomNavigationBar: _MainBottomNavigationBarWidget(viewModel: viewModel),
         ),
       ),
-    );
-  }
-
-  /// Body widget'ı
-  Widget _buildBody(MainViewModel viewModel) {
-    return IndexedStack(
-      index: viewModel.currentIndex,
-      children: const [
-        HomeView(),
-        ProfileView(),
-      ],
-    );
-  }
-
-  /// Alt navigasyon barı widget'ı
-  Widget _buildBottomNavigationBar(BuildContext context, MainViewModel viewModel) {
-    return BottomNavigationBar(
-      currentIndex: viewModel.currentIndex,
-      onTap: viewModel.onTabTapped,
-      items: [
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.chat),
-          label: _MainViewStrings.chatTab,
-          backgroundColor: context.theme.primaryColor,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.person),
-          label: _MainViewStrings.profileTab,
-          backgroundColor: context.theme.primaryColor,
-        ),
-      ],
     );
   }
 }
