@@ -35,12 +35,82 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
       <img src="screenshots/profile.png" alt="Profile View" width="300">
       <br><em>Profile View</em>
     </td>
-    <tr>
-   
-  
+  </tr>
 </table>
-
 </div>
+
+## 📂 Project Structure
+
+```
+lib/
+├── core/
+│   ├── base/
+│   │   ├── model/              # Base model interfaces
+│   │   └── view/               # Base view classes
+│   ├── bloc/                   # Global BLoC states
+│   ├── constants/              # App constants
+│   ├── init/
+│   │   ├── network/           # Network layer management
+│   │   ├── cache/             # Local storage management
+│   │   ├── notification/      # Push notification setup
+│   │   └── theme/             # App theme configuration
+│   ├── models/                # Data models
+│   └── service/               # API services
+├── feature/
+│   ├── auth/                  # Authentication feature
+│   │   ├── login/
+│   │   └── register/
+│   ├── chat/                  # Chat feature
+│   ├── home/                  # Home feature
+│   └── profile/               # Profile feature
+└── main.dart
+```
+
+## 🔍 Case Studies
+
+### 1. Network Layer Implementation
+
+The project includes a robust network layer implementation with the following features:
+
+#### Network Manager
+- Singleton pattern for network operations
+- Generic response handling
+- Type-safe API calls
+- Automatic error handling
+
+```dart
+Future<R?> send<T extends INetworkModel<T>, R>({
+  required String path,
+  required RequestType type,
+  required T parseModel,
+  Map<String, dynamic>? queryParameters,
+  Map<String, dynamic>? data,
+})
+```
+
+#### Base Network Model
+- Generic base model for all network responses
+- Type-safe JSON parsing
+```dart
+abstract class INetworkModel<T> {
+  T fromJson(Map<String, dynamic> json);
+  Map<String, dynamic> toJson();
+}
+```
+
+### 2. Service Layer Implementation
+
+Example service implementation showing CRUD operations:
+
+```dart
+abstract class IPostService {
+  Future<List<PostModel>?> getPosts();
+  Future<PostModel?> getPost(int id);
+  Future<PostModel?> createPost(String title, String body, int userId);
+  Future<PostModel?> updatePost(int id, String title, String body);
+  Future<bool> deletePost(int id);
+}
+```
 
 ## ✨ Features
 
@@ -76,6 +146,8 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
 - Firebase services integration
 - Comprehensive error handling
 - Unit and widget tests
+- Generic network layer
+- Type-safe API calls
 
 ## 🔧 Installation
 
@@ -99,31 +171,34 @@ ChatFlow is a modern and user-friendly real-time messaging application. Built wi
    flutter pub get
    ```
 
-4. Firebase configuration:
+4. Configure Firebase:
+   - Add your `google-services.json` for Android
+   - Add your `GoogleService-Info.plist` for iOS
 
-   - Create a new project in Firebase Console
-   - Add google-services.json and GoogleService-Info.plist files to respective directories
-   - Complete Firebase setup steps
-
-5. Run the application:
+5. Run the app:
    ```bash
    flutter run
    ```
+
+## 🧪 Testing
+
+Run tests using:
+```bash
+flutter test
+```
+
+## 📚 Documentation
+
+For detailed documentation about the implementation:
+- [Network Layer](docs/network.md)
+- [Authentication](docs/auth.md)
+- [Real-time Features](docs/realtime.md)
+- [State Management](docs/state.md)
 
 ## 📱 Supported Platforms
 
 - iOS 11.0 and above
 - Android 5.0 (API level 21) and above
-
-## 🧪 Tests
-
-```bash
-flutter test
-```
-
-## 📚 API Documentation
-
-For API endpoints and usage, please refer to [API.md](API.md).
 
 ## 🤝 Contributing
 
