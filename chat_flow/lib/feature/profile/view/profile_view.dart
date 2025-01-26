@@ -1,154 +1,129 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:chat_flow/core/bloc/auth/auth_bloc.dart';
 import 'package:chat_flow/core/bloc/user/user_bloc.dart';
+import 'package:chat_flow/core/components/button/button.dart';
 import 'package:chat_flow/core/components/cacheNetworkImage/cache_network_image_widget.dart';
+import 'package:chat_flow/core/components/text/custom_text.dart';
 import 'package:chat_flow/core/components/text_field/custom_text_field.dart';
 import 'package:chat_flow/core/constants/app/padding_constants.dart';
 import 'package:chat_flow/core/init/locator/locator_service.dart';
-import 'package:chat_flow/core/init/navigation/navigation_service.dart';
-import 'package:chat_flow/core/init/validator/app_validator.dart';
+
 import 'package:chat_flow/core/service/user_service.dart';
-import 'package:chat_flow/feature/auth/login/view/login_view.dart';
+import 'package:chat_flow/feature/profile/viewmodel/profile_view_model.dart';
+import 'package:chat_flow/utils/extension/num_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-part '../mixin/provile_view_mixin.dart';
+import 'package:provider/provider.dart';
 part '../widget/profile_avatar_widget.dart';
 part '../widget/notification_switch_widget.dart';
 
-class ProfileView extends StatefulWidget {
+/// Profil ekranı
+/// Kullanıcının profil bilgilerini görüntülemesini ve düzenlemesini sağlayan ekran
+class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
-}
-
-class _ProfileViewState extends State<ProfileView> {
-  late StreamSubscription<AuthState> _authSubscription;
-
-  @override
-  void initState() {
-    _authSubscription = context.read<AuthBloc>().stream.listen((state) {
-      if (state is AuthInitial) {
-        if (mounted) {
-          locator<NavigationService>().navigateToPageClear(context: context, page: const LoginView());
-        }
-      }
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _authSubscription.cancel();
-    });
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(_ProfileViewStrings.title),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(const AuthLogoutRequested());
-            },
-            icon: const Icon(Icons.logout),
+    return ChangeNotifierProvider(
+      create: (_) => ProfileViewModel(),
+      child: Consumer<ProfileViewModel>(
+        builder: (context, viewModel, _) => BlocListener<AuthBloc, AuthState>(
+          listener: viewModel.onAuthStateChanged,
+          child: Scaffold(
+            appBar: _buildAppBar(context, viewModel),
+            body: _buildBody(context, viewModel),
           ),
-        ],
+        ),
       ),
-      body: const _ProfileBodyWidget(),
     );
   }
-}
 
-class _ProfileBodyWidget extends StatefulWidget {
-  const _ProfileBodyWidget();
+  /// AppBar widget'ı
+  PreferredSizeWidget _buildAppBar(BuildContext context, ProfileViewModel viewModel) {
+    return AppBar(
+      title: const CustomText(_ProfileViewStrings.title),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () => viewModel.logout(context),
+        ),
+      ],
+    );
+  }
 
-  @override
-  State<_ProfileBodyWidget> createState() => _ProfileBodyWidgetState();
-}
+  /// Body widget'ı
+  Widget _buildBody(BuildContext context, ProfileViewModel viewModel) {
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-class _ProfileBodyWidgetState extends State<_ProfileBodyWidget> with _ProfileViewMixin {
-  @override
-  Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: PaddingConstants.paddingAllSmall,
-      child: BlocConsumer<UserBloc, UserState>(
-        bloc: _userBloc,
-        listener: (context, state) {
-          _listenBloc(state, context);
-        },
-        builder: (context, state) {
-          if (state is CurrentUserProfileLoaded) {
-            return Column(
-              children: [
-                _ProfileAvatarWidget(
-                  imageUrl: state.user.profilePhoto,
-                  onImageSelected: (image) {
-                    _image = image;
-                  },
-                ),
-                const SizedBox(height: PaddingConstants.large),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      CustomTextField(
-                        controller: _nameController,
-                        labelText: _ProfileViewStrings.nameLabel,
-                        prefixIcon: const Icon(Icons.person_outline),
-                        validator: AppValidator.name,
-                      ),
-                      const SizedBox(height: PaddingConstants.small),
-                      CustomTextField(
-                        controller: _bioController,
-                        labelText: _ProfileViewStrings.bioLabel,
-                        maxLines: 3,
-                        prefixIcon: const Icon(Icons.info_outline),
-                      ),
-                      const SizedBox(height: PaddingConstants.large),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _userBloc.add(
-                              UpdateUserProfile(
-                                state.user.copyWith(
-                                  fullName: _nameController.text,
-                                  bio: _bioController.text,
-                                ),
-                                _image,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text(_ProfileViewStrings.updateButtonText),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: PaddingConstants.large),
-                const _NotificationSwitchWidget(),
-              ],
-            );
-          } else if (state is CurrentUserProfileError) {
-            return Center(
-              child: Text(state.message),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+      child: Column(
+        children: [
+          _buildProfileImage(context, viewModel),
+          20.h.ph,
+          _buildNameField(viewModel),
+          20.h.ph,
+          _buildNotificationToggle(viewModel),
+          30.h.ph,
+          _buildUpdateButton(context, viewModel),
+        ],
       ),
     );
   }
+
+  /// Profil resmi widget'ı
+  Widget _buildProfileImage(BuildContext context, ProfileViewModel viewModel) {
+    return GestureDetector(
+      onTap: () => viewModel.updateProfileImage(context),
+      child: CircleAvatar(
+        radius: 60.r,
+        backgroundImage: viewModel.user?.profilePhoto != null ? NetworkImage(viewModel.user!.profilePhoto!) : null,
+        child: viewModel.user?.profilePhoto == null ? Icon(Icons.person, size: 60.r) : null,
+      ),
+    );
+  }
+
+  /// İsim alanı widget'ı
+  Widget _buildNameField(ProfileViewModel viewModel) {
+    return CustomTextField(
+      controller: viewModel.nameController,
+      labelText: _ProfileViewStrings.nameLabel,
+      hintText: _ProfileViewStrings.nameHint,
+      prefixIcon: const Icon(Icons.person_outline),
+    );
+  }
+
+  /// Bildirim toggle widget'ı
+  Widget _buildNotificationToggle(ProfileViewModel viewModel) {
+    return SwitchListTile(
+      title: const CustomText(_ProfileViewStrings.notificationsLabel),
+      value: viewModel.notificationsEnabled,
+      onChanged: (value) => viewModel.notificationsEnabled = value,
+    );
+  }
+
+  /// Güncelle butonu widget'ı
+  Widget _buildUpdateButton(BuildContext context, ProfileViewModel viewModel) {
+    return ButtonWidget(
+      onTap: () => viewModel.updateProfile(context),
+      text: _ProfileViewStrings.updateButtonText,
+    );
+  }
+}
+
+/// Profil ekranı için string sabitleri
+class _ProfileViewStrings {
+  const _ProfileViewStrings._();
+
+  static const String title = 'Profil';
+  static const String nameLabel = 'Ad Soyad';
+  static const String nameHint = 'John Doe';
+  static const String notificationsLabel = 'Bildirimleri Aç';
+  static const String updateButtonText = 'Güncelle';
 }
